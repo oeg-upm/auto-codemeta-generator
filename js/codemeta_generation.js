@@ -26,6 +26,13 @@ const loadContextData = async () => {
             fetch(CODEMETA_CONTEXTS["2.0"].path).then(response => response.json()),
             fetch(CODEMETA_CONTEXTS["3.0"].path).then(response => response.json())
         ]);
+
+        contextV3["@context"]["id"] = "@id";
+        contextV3["@context"]["type"] = "@type";
+        contextV2["@context"]["author"] = {"@id": "schema:author", "@container": "@list"};
+        contextV3["@context"]["author"] = {"@id": "schema:author", "@container": "@list"};
+        contextV2["@context"]["id"] = "@id";
+        contextV2["@context"]["type"] = "@type";
     return {
         [CODEMETA_CONTEXTS["2.0"].url]: contextV2,
         [CODEMETA_CONTEXTS["3.0"].url]: contextV3
@@ -94,8 +101,9 @@ const directCodemetaFields = [
     'funding',
     'developmentStatus',
     'isSourceCodeOf',
-    'isPartOf',
-    'referencePublication'
+    'isPartOf'
+    // ,
+    // 'referencePublication'
 ];
 
 const splittedCodemetaFields = [
@@ -123,8 +131,14 @@ const directRoleCodemetaFields = [
 ];
 
 const directReviewCodemetaFields = [
-    'reviewAspect',
-    'reviewBody'
+    // 'reviewAspect',
+    // 'reviewBody',
+    'referencePublicationUrl',
+    'publicationTitle',
+    'publicationDOI',
+    "issn",
+    "publicationDatePublished"
+
 ];
 
 const crossCodemetaFields = {
@@ -209,6 +223,34 @@ function generatePersons(property) {
     return persons;
 }
 
+function generateReferencePublications() {
+    var publications = [];
+    var nbPublications = getNbReferencePublications();
+    for (let pubId = 1; pubId <= nbPublications; pubId++) {
+        const publication = generateReferencePublication(pubId);
+        if (publication.identifier || publication.url || publication.name || publication.datePublished || publications.issn) {
+            publications.push(publication);
+        }
+    }
+    return publications;
+}
+function generateReferencePublication(pubId) {
+    var doc = {
+        "@type": "ScholarlyArticle"
+    };
+
+    doc["identifier"] = getIfSet(`#publicationDOI`);
+    doc["url"] = getIfSet(`#referencePublicationUrl`);
+    doc["name"] = getIfSet(`#publicationTitle`);
+    doc["datePublished"] = getIfSet(`#publicationDatePublished`);
+    doc["issn"] = getIfSet(`#issn`);
+
+    return doc;
+}
+function getNbReferencePublications() {
+    //TODO: review this count when add more referencePublications. Right now is just one
+    return document.querySelectorAll('[id^="referencePublication_"]').length || 1 ;
+}
 function generateReview() {
     const doc = {
         "@type": "Review"
@@ -237,11 +279,14 @@ async function buildExpandedDocWithAllContexts() {
 
     doc["funder"] = generateShortOrg('#funder', doc["affiliation"]);
 
-    const review = generateReview();
-    if (review["reviewAspect"] || review["reviewBody"]) {
-        doc["review"] = generateReview();
+    // const review = generateReview();
+    // if (review["reviewAspect"] || review["reviewBody"] || review["publicationTitle"]) {
+    //     doc["review"] = generateReview();
+    // }
+    var referencePublications = generateReferencePublications();
+    if (referencePublications.length > 0) {
+        doc["referencePublication"] = referencePublications;
     }
-
     // Generate simple fields parsed simply by splitting
     splittedCodemetaFields.forEach(function (item, index) {
         const id = item[0];
@@ -260,18 +305,19 @@ async function buildExpandedDocWithAllContexts() {
     var contributors = generatePersons('contributor');
     if (contributors.length > 0) {
         doc["contributor"] = contributors;
-    }
+    }   
 
     for (const [key, items] of Object.entries(crossCodemetaFields)) {
         items.forEach(item => {
-           doc[item] = doc[key];
-        });
+           doc[item] = doc[key]; 
+        }); 
     }
     return await jsonld.expand(doc);
 }
 
 // v2.0 is still default version for generation, for now
 async function generateCodemeta(codemetaVersion = "2.0") {
+
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
 
@@ -279,11 +325,36 @@ async function generateCodemeta(codemetaVersion = "2.0") {
         // Expand document with all contexts before compacting
         // to allow generating property from any context
         const expanded = await buildExpandedDocWithAllContexts();
+
         const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
+
+        function transformIdAndType(obj) {
+            if (obj && typeof obj === 'object') {
+                if (obj.id) {
+                    obj["@id"] = obj.id;
+                    delete obj.id;
+                }
+                if (obj.type) {
+                    obj["@type"] = obj.type;
+                    delete obj.type;
+                }
+                for (const key in obj) {
+                    transformIdAndType(obj[key]); // Recursión para objetos anidados
+                }
+            } else if (Array.isArray(obj)) {
+                obj.forEach(transformIdAndType); // Recursión para arrays
+            }
+        }
+
+        transformIdAndType(compacted);
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
     else {
+        // var invalidFields = inputForm.querySelectorAll(':invalid');
+        // invalidFields.forEach(function(field) {
+        //     console.log(field.name + ": " + field.validationMessage);
+        // });
         codemetaText = "";
         errorHTML = "invalid input (see error above)";
         inputForm.reportValidity();
@@ -427,7 +498,7 @@ async function importCodemeta() {
         setIfDefined('#' + item, doc[item]);
     });
     importShortOrg('#funder', doc["funder"]);
-    importReview(doc["review"]);
+    // importReview(doc["review"]);
 
     // Import simple fields by joining on their separator
     splittedCodemetaFields.forEach(function (item, index) {
@@ -474,3 +545,4 @@ function downloadCodemeta() {
     document.querySelector('#downloadCodemeta').download = "codemeta.json";
     URL.revokeObjectURL(url);
 }
+

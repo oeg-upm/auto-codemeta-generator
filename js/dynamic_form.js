@@ -188,7 +188,12 @@ function resetForm() {
     removePersons('contributor');
     // Reset the list of selected licenses
     document.getElementById("selected-licenses").innerHTML = '';
-
+    const urlRepoInput = document.getElementById("url_repo");
+    if (urlRepoInput) {
+        urlRepoInput.value = '';
+    } else {
+        console.log("Elemento url_repo no encontrado");
+    }
     // Reset the form after deleting elements, so nbPersons doesn't get
     // reset before it's read.
     document.querySelector('#inputForm').reset();
@@ -201,6 +206,14 @@ function fieldToLower(event) {
 function initCallbacks() {
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
+
+    document.querySelector('#downloadRepo').disabled = false;
+    document.querySelector('#downloadRepo')
+        .addEventListener('click', () => migrateRemoteRepository());
+
+    document.querySelector('#url_repo').disabled = false;
+    document.querySelector('#url_repo')
+        .addEventListener('keydown', (event) => getRepoDefault(event));
 
     document.querySelector('#generateCodemetaV2').disabled = false;
     document.querySelector('#generateCodemetaV2')

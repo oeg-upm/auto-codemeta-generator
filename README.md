@@ -1,5 +1,7 @@
 # Codemeta Generator
 
+Firts at all, This repository is an OEG (Ontology Engineering Group) development built upon the original Codemeta Generator.
+
 This repository contains a (client-side) web application to generate
 CodeMeta documents (aka. `codemeta.json`).
 
@@ -96,6 +98,8 @@ Then, run the tests:
 ```shell
 npx cypress@9.7.0 run
 ```
+
+The OEG’s new development adds a small configuration file, config.json, which allows setting the default repository to be migrated and the FastAPI service URL.
 
 ## Contributed by
 

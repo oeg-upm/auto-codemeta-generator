@@ -1,0 +1,4 @@
+{
+    "default_repo": "https://github.com/tpronk/somef-demo-repo",
+    "fastapi_url": "http://127.0.0.1:7979"
+}

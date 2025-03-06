@@ -9,7 +9,7 @@ See top-level LICENSE file for more information
 <head>
     <meta charset="utf-8">
     <title>CodeMeta generator</title>
-    <script src="./js/utils.js"></script>
+    <script src="./js/utils.js" ></script>
     <script src="./js/fields_data.js"></script>
     <script src="./js/dynamic_form.js"></script>
     <script src="./js/codemeta_generation.js"></script>
@@ -38,7 +38,25 @@ See top-level LICENSE file for more information
         </p>
     </noscript>
 
+    <div class="dynamicFields">
+        <fieldset id="fieldsetRepository" class="leafFieldset">
+            <legend>Online repository</legend>
+
+            <p title="Url of the repository">
+                <label for="url_repo">Url</label>
+                <input type="text" name="url_repo" id="url_repo" aria-describedby="url_repository_descr"
+                    placeholder="git+https://github.com/You/RepoName.git"/>
+
+                <span class="field-description" id="url_repository_descr">Url of repository to describe</span>
+                <input type="button" id="downloadRepo" value="Migrate properties from repository"
+                title="Fill out the form with properties from online repository" />
+                <!-- <div id="spinner" style="display:none;">🔄 Migrating...</div> -->
+                <!-- <div class="spinner" id="spinner"></div> -->
+            </p>
+        </fieldset>
+    </div>
     <form id="inputForm">
+
         <fieldset id="fieldsetSoftwareItself" class="leafFieldset">
             <legend>The software itself</legend>
 
@@ -244,26 +262,54 @@ Bugfixes: that and this." ></textarea>
         </fieldset>
 
         <fieldset id="review_container" class="leafFieldset">
-            <legend>Editorial review</legend>
+            <!-- <legend>Editorial review</legend> -->
+            <legend>Reference Publication</legend>
 
-            <p title="Scholarly article describing this software">
+            <!-- <p title="Scholarly article describing this software">
                 <label for="referencePublication">Reference Publication</label>
                 <input type="URL" name="referencePublication" id="referencePublication"
                     placeholder="https://doi.org/10.1000/xyz123" />
+            </p> -->
+            <p title="Scholarly article describing this software">
+                <label for="referencePublicationUrl">Reference Publication URL</label>
+                <input type="URL" name="referencePublicationUrl" id="referencePublicationUrl"
+                    placeholder="https://doi.org/10.1000/xyz123" />
             </p>
 
-            <p title="Part or facet of the object being review ">
+            <p title="Title of the publication">
+                <label for="publicationTitle">Title Publication</label>
+                <input type="text" name="publicationTitle" id="publicationTitle"
+                    placeholder="Title" />
+            </p>
+
+            <p title="DOI of the publication">
+                <label for="publicationDOI">DOI Publication</label>
+                <input type="text" name="publicationDOI" id="publicationDOI"
+                    placeholder="DOI" />
+            </p>
+            <p title="ISSN of the publication">
+                <label for="issn">ISSN Publication</label>
+                <input type="text" name="issn" id="issn"
+                    placeholder="ISSN" />
+            </p>
+            <p title="Date published">
+                <label for="publicationDatePublished">Date Published Publication</label>
+                <input type="text" name="publicationDatePublished" id="publicationDatePublished"
+                    placeholder="Date Published" />
+            </p>
+            <!-- <p title="Part or facet of the object being review ">
                 <label for="reviewAspect">Review aspect</label>
                 <input type="text" name="reviewAspect" id="reviewAspect"
                     placeholder="Object facet" />
-            </p>
-
-          <p title="The actual body of the review ">
+            </p> -->
+<!-- 
+            
+            <p title="The actual body of the review ">
                 <label for="reviewBody">Review body</label>
                 <textarea rows="4" cols="50"
                     name="reviewBody" id="reviewBody"
                     placeholder="Review about my software." ></textarea>
-            </p>
+            </p> -->
         </fieldset>
 
         <fieldset id="fieldsetAdditionalInfo" class="leafFieldset">
@@ -332,6 +378,7 @@ Bugfixes: that and this." ></textarea>
         </div>
 
     </form>
+    <div class="spinner" id="spinner"></div>
     <form>
       <input type="button" id="generateCodemetaV3" value="Generate codemeta.json v3.0" disabled
              title="Creates a codemeta.json v3.0 file below, from the information provided above." />
@@ -383,6 +430,7 @@ Bugfixes: that and this." ></textarea>
   <script>
     Promise.all([loadSpdxData(), loadContextData()]).then(results => {
       const [licenses, contexts] = results;
+
       SPDX_LICENSES = licenses;
       SPDX_LICENSE_IDS = licenses.map(license => license['licenseId']);
 

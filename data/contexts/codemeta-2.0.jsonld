@@ -63,7 +63,11 @@
       "targetProduct": { "@id": "schema:targetProduct"},
       "url": { "@id": "schema:url", "@type": "@id"},
       "version": { "@id": "schema:version"},
-
+      "publicationTitle": { "@id": "schema:name" },
+      "publicationDOI": { "@id": "schema:identifier" },
+      "referencePublicationUrl": { "@id": "schema:url" },
+      "issn": { "@id": "schema:issn" },
+      "publicationDatePublished": { "@id": "schema:datePublished" },
       "author": { "@id": "schema:author", "@container": "@list" },
 
       "softwareSuggestions": { "@id": "codemeta:softwareSuggestions", "@type": "@id"},
@@ -74,7 +78,8 @@
       "funding": { "@id": "codemeta:funding" },
       "readme": { "@id":"codemeta:readme", "@type": "@id" },
       "issueTracker": { "@id":"codemeta:issueTracker", "@type": "@id" },
-      "referencePublication": { "@id": "codemeta:referencePublication", "@type": "@id"},
+      "referencePublication": { "@id": "schema:referencePublication", "@container": "@list" },
+      "referencePublicationBorrar": { "@id": "codemeta:referencePublication", "@type": "@id"},
       "maintainer": { "@id": "codemeta:maintainer" }
   }
 }
