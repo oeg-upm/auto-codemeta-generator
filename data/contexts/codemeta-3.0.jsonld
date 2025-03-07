@@ -56,6 +56,11 @@
       "review": { "@id": "schema:review", "@type": "@id" },
       "reviewAspect": { "@id": "schema:reviewAspect" },
       "reviewBody": { "@id": "schema:reviewBody" },
+      "publicationTitle": { "@id": "schema:name" },
+      "publicationDOI": { "@id": "schema:identifier" },
+      "referencePublicationUrl": { "@id": "schema:url" },
+      "issn": { "@id": "schema:issn" },
+      "publicationDatePublished": { "@id": "schema:datePublished" },
       "releaseNotes": { "@id": "schema:releaseNotes"},
       "roleName": { "@id": "schema:roleName"},
       "runtimePlatform": { "@id": "schema:runtimePlatform"},
@@ -80,9 +85,11 @@
       "funding": { "@id": "codemeta:funding" },
       "readme": { "@id":"codemeta:readme", "@type": "@id" },
       "issueTracker": { "@id":"codemeta:issueTracker", "@type": "@id" },
-      "referencePublication": { "@id": "codemeta:referencePublication", "@type": "@id"},
+      "referencePublication": { "@id": "schema:referencePublication", "@container": "@list" },
+      "referencePublicationBorrar": { "@id": "codemeta:referencePublication", "@type": "@id"},
       "maintainer": { "@id": "codemeta:maintainer" },
       "hasSourceCode": { "@id": "codemeta:hasSourceCode", "@type": "@id"},
       "isSourceCodeOf": { "@id": "codemeta:isSourceCodeOf", "@type": "@id"}
   }
+
 }

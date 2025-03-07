@@ -20,7 +20,7 @@ describe('Zero author', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
         });
     });
@@ -90,18 +90,18 @@ describe('One full author', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "type": "Person",
-                        "id": "http://example.org/~jdoe",
+                        "@type": "Person",
+                        "@id": "http://example.org/~jdoe",
                         "givenName": "Jane",
                         "familyName": "Doe",
                         "email": "jdoe@example.org",
                         "affiliation": {
-                            "type": "Organization",
-                            "id": "http://example.org/",
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
                         }
                     }
                 ],
@@ -178,16 +178,16 @@ describe('Affiliation id', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "type": "Organization",
-                            "id": "http://example.org/",
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
                         }
                     }
                 ],
@@ -239,15 +239,15 @@ describe('Affiliation name', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "type": "Organization",
+                            "@type": "Organization",
                             "name": "Example Org",
                         }
                     }
@@ -347,21 +347,21 @@ describe('Author order change', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "type": "Organization",
+                            "@type": "Organization",
                             "name": "Example Org",
                         }
                     },
                     {
-                        "id": "_:author_2",
-                        "type": "Person",
+                        "@id": "_:author_2",
+                        "@type": "Person",
                         "givenName": "John",
                         "familyName": "Doe",
                     },
@@ -373,21 +373,21 @@ describe('Author order change', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "John",
                         "familyName": "Doe",
                     },
                     {
-                        "id": "_:author_2",
-                        "type": "Person",
+                        "@id": "_:author_2",
+                        "@type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "type": "Organization",
+                            "@type": "Organization",
                             "name": "Example Org",
                         }
                     },
@@ -466,16 +466,16 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "schema:Role",
+                        "@type": "schema:Role",
                         "schema:author": "_:author_1",
                         "schema:roleName": "Developer",
                         "schema:startDate": "2024-03-04",
@@ -488,16 +488,16 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
@@ -527,23 +527,23 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Maintainer",
                         "startDate": "2024-04-04",
                         "endDate": "2024-05-05"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
@@ -574,16 +574,16 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Maintainer",
                         "startDate": "2024-04-04",
@@ -597,16 +597,16 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
@@ -628,7 +628,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
@@ -661,7 +661,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
@@ -728,28 +728,28 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
                     },
                     {
-                        "id": "_:author_2",
-                        "type": "Person",
+                        "@id": "_:author_2",
+                        "@type": "Person",
                         "givenName": "Joe"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_2",
                         "roleName": "Maintainer",
                         "startDate": "2024-04-04",
@@ -777,24 +777,24 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "id": "_:author_1",
-                        "type": "Person",
+                        "@id": "_:author_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
                     },
                     {
-                        "id": "_:author_2",
-                        "type": "Person",
+                        "@id": "_:author_2",
+                        "@type": "Person",
                         "givenName": "Joe"
                     }
                 ]
@@ -805,7 +805,7 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                  "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
@@ -856,7 +856,7 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                  "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
@@ -902,11 +902,11 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": {
-                    "id": "_:contributor_1",
-                    "type": "Person",
+                    "@id": "_:contributor_1",
+                    "@type": "Person",
                     "givenName": "Jane"
                 }
             });
@@ -925,17 +925,17 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": [
                     {
-                        "id": "_:contributor_1",
-                        "type": "Person",
+                        "@id": "_:contributor_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "id": "_:contributor_2",
-                        "type": "Person",
+                        "@id": "_:contributor_2",
+                        "@type": "Person",
                         "givenName": "Joe"
                     }
                 ]
@@ -946,7 +946,7 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": {
                     "type": "Person",
@@ -964,7 +964,7 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": [
                     {
@@ -1002,16 +1002,16 @@ describe('One contributor with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": [
                     {
-                        "id": "_:contributor_1",
-                        "type": "Person",
+                        "@id": "_:contributor_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "schema:Role",
+                        "@type": "schema:Role",
                         "contributor": "_:contributor_1",
                         "schema:roleName": "Developer",
                         "schema:startDate": "2024-03-04",
@@ -1024,16 +1024,16 @@ describe('One contributor with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": [
                     {
-                        "id": "_:contributor_1",
-                        "type": "Person",
+                        "@id": "_:contributor_1",
+                        "@type": "Person",
                         "givenName": "Jane"
                     },
                     {
-                        "type": "Role",
+                        "@type": "Role",
                         "contributor": "_:contributor_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
