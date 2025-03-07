@@ -15,13 +15,10 @@
 // const FASTAPI_URL = 'http://127.0.0.1:7877'; 
 let CONFIG = {};
 
-// Cargar la configuración desde el archivo JSON
 fetch('./js/config.json')
     .then(response => response.json())
     .then(data => {
         CONFIG = data;
-        // Ahora puedes acceder a CONFIG.default_repo
-        console.log(CONFIG.default_repo);
     })
     .catch(error => {
         console.error('Error loading config:', error);
@@ -79,8 +76,8 @@ function validateDocument(doc) {
 
 function getRepoDefault(event) {
     if (event.key === "Tab" && event.target.value.trim() === '') {
-        event.preventDefault(); // Evitar que el foco cambie antes de asignar el valor
-        event.target.value = CONFIG.default_repo; // Asignar el valor por defecto
+        event.preventDefault(); 
+        event.target.value = CONFIG.default_repo; 
     }
 }
 
@@ -132,7 +129,8 @@ function migrateRemoteRepository() {
     // fetch(`https://127.0.0.1:7979/metadata?url=https://github.com/dgarijo/Widoco/&threshold=0.8&ignoreClassifiers=false`, 
     //     requestOptions)
     // Send request to FastAPI
-    fetch(`${CONFIG.fastapi_url}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
+    const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
+    fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)
     // fetch(`http://127.0.0.1:7979/metadata?url=https://github.com/dgarijo/Widoco/&threshold=0.8&ignoreClassifiers=false`, 
     //     requestOptions)
