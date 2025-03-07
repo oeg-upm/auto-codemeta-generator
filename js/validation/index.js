@@ -130,6 +130,7 @@ function migrateRemoteRepository() {
     //     requestOptions)
     // Send request to FastAPI
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
+    console.log(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`);
     fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)
     // fetch(`http://127.0.0.1:7979/metadata?url=https://github.com/dgarijo/Widoco/&threshold=0.8&ignoreClassifiers=false`, 
