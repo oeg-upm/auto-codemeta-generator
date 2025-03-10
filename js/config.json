@@ -1,4 +1,4 @@
 {
     "default_repo": "https://github.com/tpronk/somef-demo-repo",
-    "fastapi_url": "https://192.168.122.87:23705"
+    "fastapi_url": " https://api.autocodemeta.linkeddata.es/"
 }
