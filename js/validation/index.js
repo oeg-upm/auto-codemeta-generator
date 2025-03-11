@@ -76,6 +76,7 @@ function validateDocument(doc) {
 
 function getRepoDefault(event) {
     if (event.key === "Tab" && event.target.value.trim() === '') {
+
         event.preventDefault(); 
         event.target.value = CONFIG.default_repo; 
     }
@@ -126,15 +127,9 @@ function migrateRemoteRepository() {
         return;
     }
 
-    // fetch(`https://127.0.0.1:7979/metadata?url=https://github.com/dgarijo/Widoco/&threshold=0.8&ignoreClassifiers=false`, 
-    //     requestOptions)
-    // Send request to FastAPI
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
-    console.log(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`);
     fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)
-    // fetch(`http://127.0.0.1:7979/metadata?url=https://github.com/dgarijo/Widoco/&threshold=0.8&ignoreClassifiers=false`, 
-    //     requestOptions)
     .then(response => {
 
         if (!response.ok) {
@@ -148,7 +143,7 @@ function migrateRemoteRepository() {
         populateFieldsCodemeta(metadata);
 
         setTimeout(() => {
-            alert('Metadata received and fields updated!');
+            // alert('Metadata received and fields updated!');
             generateCodemeta()
         }, 100); 
     })
@@ -157,7 +152,6 @@ function migrateRemoteRepository() {
         console.error('Error:', error);
         alert('There was an error extracting data from the repository.');
     });
-
 
 }
 
@@ -287,7 +281,6 @@ function populateFields(metadata) {
 
 //it seems with codemeta.json we obtein less information than pure json. 
 function populateFieldsCodemeta(metadata) {
-
     if (metadata.keywords) {
         let keywords;
         if (Array.isArray(metadata.keywords)) {
@@ -368,9 +361,14 @@ function populateFieldsCodemeta(metadata) {
         document.getElementById('issueTracker').value = metadata.issueTracker;
     }
 
-    if (metadata.license) {
+    if (metadata.license  && metadata.license.identifier) {
         const selectedLicensesDiv = document.getElementById('selected-licenses');
         selectedLicensesDiv.innerHTML = ''; 
+
+        const selectedLicensesHidden = document.getElementById('selectedLicensesHidden');
+        selectedLicensesHidden.value = ''; 
+        const licenseField = document.getElementById('license');
+        licenseField.setAttribute('placeholder', '');
 
         const spdxId = metadata.license.identifier.split('/').pop();
         const newLicense = document.createElement('div');
@@ -379,6 +377,8 @@ function populateFieldsCodemeta(metadata) {
             <button type="button" class="remove-license" onclick="removeLicense(this)">Remove</button>
         `;
         selectedLicensesDiv.appendChild(newLicense);
+        selectedLicensesHidden.value = spdxId;
+        licenseField.setAttribute('placeholder', spdxId);
     }
 
     if (metadata.downloadUrl) {

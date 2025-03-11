@@ -42,6 +42,38 @@ function insertLicenseElement(licenseId) {
 }
 
 function validateLicense(e) {
+    // Continuar solo si se presiona Enter o Tab
+    if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 9) {
+        return;
+    }
+
+    const licenseField = document.getElementById('license'); // Campo visible
+    const selectedLicensesHidden = document.getElementById('selectedLicensesHidden'); // Campo oculto
+    let selectedLicenses = selectedLicensesHidden.value ? selectedLicensesHidden.value.split(', ') : [];
+
+    const license = licenseField.value.trim();
+
+    if (SPDX_LICENSE_IDS !== null && SPDX_LICENSE_IDS.indexOf(license) === -1) {
+        licenseField.setCustomValidity('Unknown license id');
+    } else {
+
+        if (!selectedLicenses.includes(license)) {
+            selectedLicenses.push(license);
+            selectedLicensesHidden.value = selectedLicenses.join(', ');
+
+            licenseField.setAttribute('placeholder', selectedLicenses.join(', '));
+
+            insertLicenseElement(license);
+        }
+        
+        licenseField.value = ""; 
+        licenseField.setCustomValidity('');
+        generateCodemeta();
+    }
+}
+
+
+function validateLicenseOld(e) {
     // continue only if Enter/Tab key is pressed
     if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 9) {
         return;
@@ -51,7 +83,8 @@ function validateLicense(e) {
     // work in either case.
 
     var licenseField = document.getElementById('license');
-    var license = licenseField.value;
+    var license = licenseField.value.trim();
+
     if (SPDX_LICENSE_IDS !== null && SPDX_LICENSE_IDS.indexOf(license) == -1) {
         licenseField.setCustomValidity('Unknown license id');
     }
@@ -63,8 +96,22 @@ function validateLicense(e) {
         generateCodemeta();
     }
 }
-
 function removeLicense(btn) {
+    const licenseId = btn.parentElement.querySelector('.license-id').textContent; 
+    const selectedLicensesHidden = document.getElementById('selectedLicensesHidden'); 
+    const licenseField = document.getElementById('license'); 
+
+    let selectedLicenses = selectedLicensesHidden.value.split(', ').filter(id => id !== licenseId);
+    selectedLicensesHidden.value = selectedLicenses.join(', ');
+    licenseField.setAttribute('placeholder', selectedLicenses.join(', '));
+    licenseField.value = "";
+    btn.parentElement.remove();
+    generateCodemeta();
+
+}
+
+
+function removeLicenseOld(btn) {
     btn.parentElement.remove();
     generateCodemeta();
 }

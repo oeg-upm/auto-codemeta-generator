@@ -194,6 +194,15 @@ function resetForm() {
     } else {
         console.log("Elemento url_repo no encontrado");
     }
+    const selectedLicensesHidden = document.getElementById("selectedLicensesHidden");
+    if (selectedLicensesHidden) {
+        selectedLicensesHidden.value = '';
+    } 
+    const licenseField = document.getElementById("license");
+    if (licenseField) {
+        licenseField.setAttribute('placeholder', ''); 
+        licenseField.value = ''; 
+    } 
     // Reset the form after deleting elements, so nbPersons doesn't get
     // reset before it's read.
     document.querySelector('#inputForm').reset();
