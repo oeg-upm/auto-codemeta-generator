@@ -1,0 +1,29 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "@type": "SoftwareSourceCode",
+    "license": {},
+    "codeRepository": "https://github.com/ZaixuCui/PANDA",
+    "issueTracker": "https://github.com/ZaixuCui/PANDA/issues",
+    "dateCreated": "2015-05-28",
+    "dateModified": "2024-07-03",
+    "downloadUrl": "https://github.com/ZaixuCui/PANDA/releases",
+    "name": "PANDA",
+    "keywords": "",
+    "programmingLanguage": [
+        "MATLAB",
+        "Shell"
+    ],
+    "buildInstructions": [
+        "https://github.com/ZaixuCui/PANDA/wiki"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": "https://github.com/ZaixuCui"
+        }
+    ],
+    "readme": "https://raw.githubusercontent.com/ZaixuCui/PANDA/master/README.md",
+    "description": [
+        "Pipeline software \"Pipeline for Analyzing braiN Diffusion imAges\" for processing diffusion MRI data."
+    ]
+}

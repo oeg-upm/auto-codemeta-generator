@@ -366,3 +366,26 @@ describe('JSON Import', function() {
         cy.get('#contIntegration').should('have.value', 'https://test-ci1.org/my-software');
     });
 });
+
+describe('Test populateFieldsCodemeta with missing license', () => {
+    it('Should handle metadata without license gracefully', () => {
+        // Cargar el JSON directamente con fetch
+        cy.visit('./index.html');
+
+        cy.window().then((win) => {
+            // Realiza un fetch para obtener el JSON
+            fetch('cypress/fixtures/metadata_panda.json')
+                .then((response) => response.json())
+                .then((metadata) => {
+                    // Llama a la función populateFieldsCodemeta con el metadata cargado
+                    expect(win.populateFieldsCodemeta).to.exist;
+                    win.populateFieldsCodemeta(metadata);
+
+                    // Verificar que los elementos están correctamente actualizados
+                    cy.get('#selected-licenses').should('be.empty'); // Licencias seleccionadas vacías
+                    cy.get('#selectedLicensesHidden').should('have.value', ''); // Campo oculto vacío
+                    cy.get('#license').should('have.attr', 'placeholder', ''); // Placeholder vacío
+                });
+        });
+    });
+});
