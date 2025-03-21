@@ -113,7 +113,8 @@ function parseAndValidateCodemeta(showPopup) {
 function migrateRemoteRepository() {
 
     const spinner = document.getElementById('spinner');
-    const repoUrl = document.getElementById('url_repo').value;
+    const repoUrlInput = document.getElementById('url_repo'); 
+    const repoUrl = repoUrlInput.value;  
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -126,7 +127,8 @@ function migrateRemoteRepository() {
         alert('Please enter the repository URL.');
         return;
     }
-
+    resetForm()
+    repoUrlInput.value = repoUrl;  
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
     fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)

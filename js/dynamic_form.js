@@ -191,9 +191,7 @@ function resetForm() {
     const urlRepoInput = document.getElementById("url_repo");
     if (urlRepoInput) {
         urlRepoInput.value = '';
-    } else {
-        console.log("Elemento url_repo no encontrado");
-    }
+    } 
     const selectedLicensesHidden = document.getElementById("selectedLicensesHidden");
     if (selectedLicensesHidden) {
         selectedLicensesHidden.value = '';
