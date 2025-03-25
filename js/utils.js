@@ -9,7 +9,6 @@
 
 function getNbPersons(prefix) {
     var nbField = document.querySelector(`#${prefix}_nb`);
-    console.log(nbField)
     return parseInt(nbField.value, 10);
 }
 
