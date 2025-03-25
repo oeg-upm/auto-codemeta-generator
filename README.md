@@ -206,6 +206,5 @@ The authors acknowledge the OSCARS project, which has received funding from the 
 ## Contributed by
 
 ![Image description](https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg)
-
-![Ontology Engineering Group](https://oeg.fi.upm.es/images/logo_oeg.png)
+![Ontology Engineering Group](assets/logo.gif)
 
