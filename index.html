@@ -21,12 +21,12 @@ See top-level LICENSE file for more information
 </head>
 <body>
   <header>
-    <h1>CodeMeta generator v3.0</h1>
+    <h1>Auto CodeMeta generator v3.0</h1>
   </header>
 
   <main>
 
-    <p>Most fields are optional. Mandatory fields will be highlighted when generating Codemeta.</p>
+    <p>Add a repository URL or start completing the fields below to generate a CodeMeta file. Most fields are optional. Mandatory fields will be highlighted when generating Codemeta.</p>
 
     <noscript>
         <p id="noscriptError">
@@ -45,10 +45,10 @@ See top-level LICENSE file for more information
             <p title="Url of the repository">
                 <label for="url_repo">Url</label>
                 <input type="text" name="url_repo" id="url_repo" aria-describedby="url_repository_descr"
-                    placeholder="git+https://github.com/You/RepoName.git"/>
+                    placeholder="https:github.com/You/reponame"/>
 
-                <span class="field-description" id="url_repository_descr">URL of the repository to be described</span>
-                <input type="button" id="downloadRepo" value="Migrate properties from repository"
+                <span class="field-description" id="url_repository_descr">URL of the source code repository to describe. GitHub and GitLab repositories supported</span>
+                <input type="button" id="downloadRepo" value="Complete properties from selected repository"
                 title="Fill out the form with properties from online repository" />
                 <!-- <div id="spinner" style="display:none;">🔄 Migrating...</div> -->
                 <!-- <div class="spinner" id="spinner"></div> -->
@@ -112,9 +112,9 @@ See top-level LICENSE file for more information
             <legend>Discoverability and citation</legend>
 
             <p title="Unique identifier">
-                <label for="identifier">Unique identifier</label>
+                <label for="identifier">Software unique identifier</label>
                 <input type="text" name="identifier" id="identifier"
-                    placeholder="10.151.xxxxx" aria-describedby="identifier_descr" />
+                    placeholder="Zenodo DOI" aria-describedby="identifier_descr" />
 
                 <br />
                 <span class="field-description" id="identifier_descr">
@@ -143,9 +143,12 @@ See top-level LICENSE file for more information
             </p>
 
             <p title="Comma-separated list of keywords">
-                <label for="keywords">Keywords</label>
-                <input type="text" name="keywords" id="keywords"
-                    placeholder="ephemerides, orbit, astronomy"  />
+                <!-- <label for="keywords">Keywords</label> -->
+                <input type="hidden" name="keywords" id="keywords"
+                placeholder="ephemerides, orbit, astronomy" disabled />
+                <!-- <input type="text" name="keywords" id="keywords"
+                    placeholder="ephemerides, orbit, astronomy" disabled /> -->
+                Keywords can be added below
             </p>
 
             <p title="Funding / grant">
@@ -279,23 +282,23 @@ Bugfixes: that and this." ></textarea>
             </p>
 
             <p title="Title of the publication">
-                <label for="publicationTitle">Title Publication</label>
+                <label for="publicationTitle">Title of publicationn</label>
                 <input type="text" name="publicationTitle" id="publicationTitle"
                     placeholder="Title" />
             </p>
 
             <p title="DOI of the publication">
-                <label for="publicationDOI">DOI Publication</label>
+                <label for="publicationDOI">DOI of publication</label>
                 <input type="text" name="publicationDOI" id="publicationDOI"
                     placeholder="DOI" />
             </p>
             <p title="ISSN of the publication">
-                <label for="issn">ISSN Publication</label>
+                <label for="issn">ISSN of publication</label>
                 <input type="text" name="issn" id="issn"
                     placeholder="ISSN" />
             </p>
             <p title="Date published">
-                <label for="publicationDatePublished">Date Published Publication</label>
+                <label for="publicationDatePublished">Date of publication</label>
                 <input type="text" name="publicationDatePublished" id="publicationDatePublished"
                     placeholder="Date Published" />
             </p>
@@ -352,6 +355,18 @@ Bugfixes: that and this." ></textarea>
         </fieldset>
 
         <div class="dynamicFields">
+            <fieldset class="keywords" id="keyword_container">
+                <legend>Keywords</legend>
+
+                <input type="hidden" id="keyword_nb" value="0" />
+                <div id="addRemoveKeywords">
+                    <input type="button" id="keyword_add" value="Add one"
+                        onclick="addKeyword()" />
+                    <input type="button" id="keyword_remove" value="Remove last"
+                        onclick="removeKeyword()" />
+                </div>
+            </fieldset>
+
             <fieldset class="persons" id="author_container">
                 <legend>Authors</legend>
 
@@ -405,9 +420,13 @@ Bugfixes: that and this." ></textarea>
   <footer>
     <p style="text-align:center;">
         Do you want to improve this tool ?
-        Check out the
+        <!-- Check out the
         <a href="https://github.com/codemeta/codemeta-generator">
             CodeMeta-generator repository</a>
+        <br /> -->
+        Check out the 
+        <a href="https://github.com/oeg-upm/auto-codemeta-generator">
+            Auto-Codemeta repository</a>
         <br />
         Join the
         <a href="https://github.com/codemeta/codemeta">CodeMeta community</a>
@@ -417,14 +436,14 @@ Bugfixes: that and this." ></textarea>
         <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a>
         -
         <a href="https://w3id.org/codemeta/3.0">v3.0</a>
+        <br />
+        <br />
+        The authors acknowledge the OSCARS project, which has received funding from the European Commission's Horizon Europe Research and Innovation programme under grant agreement No. 101129751.
     </p>
 
-    <h2 style="text-align:right;">Contributed by</h2>
-    <p style="text-align:right;">
-        <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
-            <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg"
-                width="300">
-        </a>
+    <h3 style="text-align:right;">Contributed by</h3>
+    <p style="text-align:right; white-space: nowrap;">
+        <a href="https://www.softwareheritage.org/save-and-reference-research-software/" style="margin: 0;"><img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg" width="150" style="display:inline; margin: 0;"></a><a href="https://oeg.fi.upm.es/" style="margin: 0;"><img src="assets/logo.gif" alt="OEG logo" class="img-rounded" width="75" style="display:inline; margin: 0;"></a>  
     </p>
   </footer>
 

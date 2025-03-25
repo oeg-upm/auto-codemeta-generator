@@ -64,6 +64,31 @@ function createPersonFieldset(personPrefix, legend) {
     return fieldset;
 }
 
+function createKeywordFieldset(keywordPrefix, legend) {
+    // Creates a fieldset containing inputs for informations about a person
+    var fieldset = document.createElement("fieldset")
+
+    fieldset.classList.add("keyword");
+    fieldset.classList.add("leafFieldset");
+    fieldset.id = keywordPrefix;
+
+    fieldset.innerHTML = `
+        <legend>${legend}</legend>
+        <p>
+            <label for="${keywordPrefix}_name">Name</label>
+            <input type="text" id="${keywordPrefix}_name" name="${keywordPrefix}_name"
+                placeholder="keyword" />
+        </p>
+        <p>
+            <label for="${keywordPrefix}_id">URI of defined term (if applicable)</label>
+            <input type="url" id="${keywordPrefix}_id" name="${keywordPrefix}_id"
+                placeholder="https://example.com/keyword" />
+        </p>
+        `;
+
+    return fieldset;
+}
+
 function addPersonWithId(container, prefix, legend, id) {
     var personPrefix = `${prefix}_${id}`;
     var fieldset = createPersonFieldset(personPrefix, `${legend} #${id}`);
@@ -76,6 +101,13 @@ function addPersonWithId(container, prefix, legend, id) {
         .addEventListener('click', () => movePerson(prefix, id, "right"));
     document.querySelector(`#${personPrefix}_role_add`)
         .addEventListener('click', () => addRole(personPrefix));
+}
+
+function addKeywordWithId(container, id) {
+    var keywordPrefix = `keyword_${id}`;
+    var fieldset = createKeywordFieldset(keywordPrefix, `Keyword #${id}`);
+
+    container.appendChild(fieldset);
 }
 
 function movePerson(prefix, id1, direction) {
@@ -122,6 +154,24 @@ function addPerson(prefix, legend) {
     return personId;
 }
 
+function addKeyword() {
+    var container = document.querySelector(`#keyword_container`);
+    var keywordId = getNbKeywords() + 1;
+
+    addKeywordWithId(container, keywordId);
+    setNbKeywords(keywordId);
+
+    return keywordId;
+}
+
+function removeKeyword(keywordId) {
+    var keywordId = getNbKeywords();
+    document.querySelector(`#keyword_${keywordId}`).remove();
+
+    setNbKeywords(keywordId - 1);
+    generateCodemeta();
+}
+
 function removePerson(prefix) {
     var personId = getNbPersons(prefix);
 
@@ -135,9 +185,17 @@ function removePerson(prefix) {
 function initPersons(prefix, legend) {
     var nbPersons = getNbPersons(prefix);
     var personContainer = document.querySelector(`#${prefix}_container`)
-
     for (let personId = 1; personId <= nbPersons; personId++) {
         addPersonWithId(personContainer, prefix, legend, personId);
+    }
+}
+
+function initKeywords() {
+    var nbKeywords = getNbKeywords();
+    var keywordContainer = document.querySelector(`#keyword_container`)
+
+    for (let keywordId = 1; keywordId <= nbKeywords; keywordId++) {
+        addKeywordWithId(keywordContainer, keywordId);
     }
 }
 
@@ -150,6 +208,14 @@ function removePersons(prefix) {
     }
 }
 
+function removeKeywords() {
+    var nbKeywords = getNbKeywords();
+    var keywordContainer = document.querySelector(`#keyword_container`)
+
+    for (let keywordId = 1; keywordId <= nbKeywords; keywordId++) {
+        removeKeyword(keywordId)
+    }
+}
 function addRole(personPrefix) {
     const roleButtonGroup = document.querySelector(`#${personPrefix}_role_add`);
     const roleIndexNode = document.querySelector(`#${personPrefix}_role_index`);
@@ -186,6 +252,7 @@ function removeRole(personPrefix, roleIndex) {
 function resetForm() {
     removePersons('author');
     removePersons('contributor');
+    removeKeywords();
     // Reset the list of selected licenses
     document.getElementById("selected-licenses").innerHTML = '';
     const urlRepoInput = document.getElementById("url_repo");
@@ -253,4 +320,5 @@ function initCallbacks() {
 
     initPersons('author', 'Author');
     initPersons('contributor', 'Contributor');
+    initKeywords();
 }

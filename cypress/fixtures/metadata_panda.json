@@ -8,7 +8,16 @@
     "dateModified": "2024-07-03",
     "downloadUrl": "https://github.com/ZaixuCui/PANDA/releases",
     "name": "PANDA",
-    "keywords": "",
+    "keywords": [{
+        "name": "topic1",
+        "@id": "https://example.org/topic1",
+        "@type": "DefinedTerm"
+    },
+    "topic2",
+    {
+        "@id": "https://example.org/topic3",
+        "@type": "URL"
+    }]     ,
     "programmingLanguage": [
         "MATLAB",
         "Shell"

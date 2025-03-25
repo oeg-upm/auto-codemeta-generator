@@ -200,6 +200,12 @@ There is a config.json where it can be change the default repository to migrate 
     "fastapi_url": "https://api.autocodemeta.linkeddata.es"
 }
 
+## Funding
+The authors acknowledge the OSCARS project, which has received funding from the European Commission's Horizon Europe Research and Innovation programme under grant agreement No. 101129751
+
 ## Contributed by
 
 ![Image description](https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg)
+
+![Ontology Engineering Group](https://oeg.fi.upm.es/images/logo_oeg.png)
+

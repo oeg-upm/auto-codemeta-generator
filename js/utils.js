@@ -8,7 +8,16 @@
 "use strict";
 
 function getNbPersons(prefix) {
+    console.log('---> nº persons')
     var nbField = document.querySelector(`#${prefix}_nb`);
+    console.log(nbField)
+    return parseInt(nbField.value, 10);
+}
+
+function getNbKeywords() {
+    console.log('---> nº keywords')
+    var nbField = document.querySelector(`#keyword_nb`);
+    console.log(nbField)
     return parseInt(nbField.value, 10);
 }
 
@@ -17,6 +26,10 @@ function setNbPersons(prefix, nb) {
     nbField.value = nb;
 }
 
+function setNbKeywords(nb) {
+    var nbField = document.querySelector(`#keyword_nb`);
+    nbField.value = nb;
+}
 function setError(msg) {
     document.querySelector("#errorMessage").innerHTML = msg;
 }

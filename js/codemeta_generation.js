@@ -31,6 +31,8 @@ const loadContextData = async () => {
         contextV3["@context"]["type"] = "@type";
         contextV2["@context"]["author"] = {"@id": "schema:author", "@container": "@list"};
         contextV3["@context"]["author"] = {"@id": "schema:author", "@container": "@list"};
+        contextV2["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
+        contextV3["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
         contextV2["@context"]["id"] = "@id";
         contextV2["@context"]["type"] = "@type";
     return {
@@ -185,6 +187,33 @@ function generatePerson(idPrefix) {
     return doc;
 }
 
+function generateKeyword(idPrefix) {
+
+    const name = getIfSet(`#${idPrefix}_name`);
+    const id = getIfSet(`#${idPrefix}_id`);
+
+    if (!name && !id) {
+        return undefined; 
+    }
+
+    if (name && id) {
+        return {
+            "@type": "DefinedTerm",
+            "name": name,
+            "@id": id
+        };
+    }
+
+    if (id) {
+        return {
+            "@type": "URL",
+            "@id": id
+        };
+    }
+
+    return name;
+}
+
 function generateRole(id) {
     const doc = {
         "@type": "Role"
@@ -221,6 +250,19 @@ function generatePersons(property) {
     }
 
     return persons;
+}
+function generateKeywords() {
+    var keywords = [];
+    var nbKeywords = getNbKeywords();
+
+    for (let keywordId = 1; keywordId <= nbKeywords; keywordId++) {
+        const idPrefix = `keyword_${keywordId}`;
+        const keyword = generateKeyword(idPrefix);
+        if (keyword !== undefined) { 
+            keywords.push(keyword);
+        }
+    }
+    return keywords;
 }
 
 function generateReferencePublications() {
@@ -305,8 +347,11 @@ async function buildExpandedDocWithAllContexts() {
     var contributors = generatePersons('contributor');
     if (contributors.length > 0) {
         doc["contributor"] = contributors;
+    }  
+    var keywords = generateKeywords();
+    if (keywords.length > 0) {
+        doc["keywords"] = keywords;
     }   
-
     for (const [key, items] of Object.entries(crossCodemetaFields)) {
         items.forEach(item => {
            doc[item] = doc[key]; 
@@ -430,6 +475,26 @@ function importRoles(personPrefix, roles) {
     });
 }
 
+function importKeywords(keywords) {
+    if (keywords === undefined) {
+        return;
+    }
+    keywords.forEach((keyword, index) => {
+        const keywordId = addKeyword();
+        const keywordPrefix = `keyword_${keywordId}`;
+
+        if (typeof keyword === 'string') {
+            document.querySelector(`#${keywordPrefix}_name`).value = keyword;
+        } else if (typeof keyword === 'object' && keyword['@type'] === 'DefinedTerm') {
+            document.querySelector(`#${keywordPrefix}_id`).value = keyword['@id'] || '';
+            document.querySelector(`#${keywordPrefix}_name`).value = keyword.name || '';
+        } else if (typeof keyword === 'object' && keyword['@type'] === 'URL') {
+            document.querySelector(`#${keywordPrefix}_id`).value = keyword['@id'] || '';
+        }
+
+    });
+}
+
 function importPersons(prefix, legend, docs) {
     if (docs === undefined) {
         return;
@@ -522,6 +587,15 @@ async function importCodemeta() {
     }
 
     importPersons('author', 'Author', doc['author']);
+  
+    if (doc['keywords']) {
+        if (typeof doc['keywords'] === 'string') {
+            metadata.keywords = doc['keywords'].split(',').map(k => k.trim());
+        } else if (!Array.isArray(doc['keywords'])) {
+            metadata.keywords = [];
+        }
+        importKeywords(doc['keywords']);
+    }
     if (doc['contributor']) {
         // If only one contributor, it is compacted to an object
         const contributors = Array.isArray(doc['contributor'])? doc['contributor'] : [doc['contributor']];
