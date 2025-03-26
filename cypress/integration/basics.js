@@ -389,3 +389,32 @@ describe('Test populateFieldsCodemeta with missing license', () => {
         });
     });
 });
+
+describe('Test populateFieldsCodemeta with keywords', () => {
+    it('Should populate keywords correctly', () => {
+        cy.visit('./index.html');
+
+        cy.window().then((win) => {
+            fetch('cypress/fixtures/metadata_keywords.json')
+                .then((response) => response.json())
+                .then((metadata) => {
+
+                    expect(win.populateFieldsCodemeta).to.exist;
+                    win.populateFieldsCodemeta(metadata);
+                    cy.get('#keyword_container input[name^="keyword_"]').should('have.length', metadata.keywords.length);
+
+                    metadata.keywords.forEach((keyword, index) => {
+                        const keywordIndex = index + 1;
+                        if (typeof keyword === 'string') {
+                            cy.get(`#keyword_${keywordIndex}_name`).should('have.value', keyword);
+                        } else if (keyword['@type'] === 'URL') {
+                            cy.get(`#keyword_${keywordIndex}_id`).should('have.value', keyword['@id']);
+                        } else if (keyword['@type'] === 'DefinedTerm') {
+                            cy.get(`#keyword_${keywordIndex}_name`).should('have.value', keyword.name);
+                            cy.get(`#keyword_${keywordIndex}_id`).should('have.value', keyword['@id']);
+                        }
+                    });
+                });
+        });
+    });
+});

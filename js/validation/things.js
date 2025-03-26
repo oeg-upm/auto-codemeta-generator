@@ -63,7 +63,36 @@ function validateThingOrId(parentFieldName, typeFieldValidators, doc) {
         return false;
     }
 }
+function validateKeyword(fieldName, doc) {
+    if (typeof doc === 'string') {
+        return true; // Es un keyword simple (texto), válido
+    }
 
+    if (typeof doc === 'object' && !Array.isArray(doc)) {
+        if (doc["@type"] === "URL") {
+            if (!doc["@id"] || !isUrlOrBlankNodeId(doc["@id"])) {
+                setError(`"${fieldName}" (URL) must have a valid "@id" field.`);
+                return false;
+            }
+            return true;
+        }
+
+        if (doc["@type"] === "DefinedTerm") {
+            if (!doc["name"] || typeof doc["name"] !== "string") {
+                setError(`"${fieldName}" (DefinedTerm) must have a "name" field.`);
+                return false;
+            }
+            if (!doc["@id"] || !isUrlOrBlankNodeId(doc["@id"])) {
+                setError(`"${fieldName}" (DefinedTerm) must have a valid "@id" field.`);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    setError(`"${fieldName}" must be a string, a URL object, or a DefinedTerm object.`);
+    return false;
+}
 // Validates subtypes of Thing
 //
 // typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
@@ -160,6 +189,12 @@ function validateActors(fieldName, doc) {
     });
 }
 
+function validateKeywords(fieldName, doc) {
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        return validateKeyword(fieldName, subdoc);
+    });
+}
+
 // Validates a Person or an array of Person
 function validatePersons(fieldName, doc) {
     return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
@@ -234,7 +269,7 @@ var softwareFieldValidators = {
     "encoding": noValidation,
     "fileFormat": validateTextsOrUrls,
     "funder": validateActors, // TODO: may be other types
-    "keywords": validateTexts,
+    "keywords": validateKeywords,
     "license": validateCreativeWorks,
     "producer": validateActors,
     "provider": validateActors,

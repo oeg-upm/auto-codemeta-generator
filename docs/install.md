@@ -1,7 +1,7 @@
 
 ## Clone project from 
 ```
-git clone https://github.com/codemeta/codemeta-generator
+git clone https://github.com/oeg-upm/auto-codemeta-generator
 ```
 cd codemeta-generator
 python3 -m http.server 80

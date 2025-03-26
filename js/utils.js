@@ -12,11 +12,20 @@ function getNbPersons(prefix) {
     return parseInt(nbField.value, 10);
 }
 
+function getNbKeywords() {
+    var nbField = document.querySelector(`#keyword_nb`);
+    return parseInt(nbField.value, 10);
+}
+
 function setNbPersons(prefix, nb) {
     var nbField = document.querySelector(`#${prefix}_nb`);
     nbField.value = nb;
 }
 
+function setNbKeywords(nb) {
+    var nbField = document.querySelector(`#keyword_nb`);
+    nbField.value = nb;
+}
 function setError(msg) {
     document.querySelector("#errorMessage").innerHTML = msg;
 }

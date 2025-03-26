@@ -113,7 +113,8 @@ function parseAndValidateCodemeta(showPopup) {
 function migrateRemoteRepository() {
 
     const spinner = document.getElementById('spinner');
-    const repoUrl = document.getElementById('url_repo').value;
+    const repoUrlInput = document.getElementById('url_repo'); 
+    const repoUrl = repoUrlInput.value;  
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -126,7 +127,8 @@ function migrateRemoteRepository() {
         alert('Please enter the repository URL.');
         return;
     }
-
+    resetForm()
+    repoUrlInput.value = repoUrl;  
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
     fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)
@@ -155,7 +157,7 @@ function migrateRemoteRepository() {
 
 }
 
-// Esto era con el json
+// this with pure json no codemeta
 function populateFields(metadata) {
 
     if (metadata.keywords && metadata.keywords.length > 0) {
@@ -281,15 +283,25 @@ function populateFields(metadata) {
 
 //it seems with codemeta.json we obtein less information than pure json. 
 function populateFieldsCodemeta(metadata) {
+
     if (metadata.keywords) {
-        let keywords;
-        if (Array.isArray(metadata.keywords)) {
-            keywords = metadata.keywords.map(k => k.result.value).join(', ');
-        } else {
-            keywords = metadata.keywords; 
+        if (typeof metadata.keywords === 'string') {
+            metadata.keywords = metadata.keywords.split(',').map(k => k.trim());
+        } else if (!Array.isArray(metadata.keywords)) {
+            metadata.keywords = [];
         }
-        document.getElementById('keywords').value = keywords;
+        populateKeywords(metadata.keywords)
     }
+
+    // if (metadata.keywords) {
+    //     let keywords;
+    //     if (Array.isArray(metadata.keywords)) {
+    //         keywords = metadata.keywords.map(k => k.result.value).join(', ');
+    //     } else {
+    //         keywords = metadata.keywords; 
+    //     }
+    //     document.getElementById('keywords').value = keywords;
+    // }
 
     if (metadata.description) {
         let description;
@@ -541,5 +553,33 @@ function populateAuthors(authors) {
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
         }
+    });
+}
+
+function populateKeywords(keywords) {
+    // Eliminamos las keyword previas
+    const keywordsContainer = document.querySelector('#keyword_container');
+    keywordsContainer.innerHTML = `
+        <legend>Keywords</legend>
+        <input type="hidden" id="keyword_nb" value="0" />
+        <div id="addRemoveKeyword">
+            <input type="button" id="keyword_add" value="Add one" onclick="addKeyword();" />
+            <input type="button" id="keyword_remove" value="Remove last" onclick="removeKeyword();" />
+        </div>
+    `;
+  
+    keywords.forEach((keyword, index) => {
+        const keywordId = addKeyword();
+        const keywordPrefix = `keyword_${keywordId}`;
+
+        if (typeof keyword === 'string') {
+            document.querySelector(`#${keywordPrefix}_name`).value = keyword;
+        } else if (typeof keyword === 'object' && keyword['@type'] === 'DefinedTerm') {
+            document.querySelector(`#${keywordPrefix}_id`).value = keyword['@id'] || '';
+            document.querySelector(`#${keywordPrefix}_name`).value = keyword.name || '';
+        } else if (typeof keyword === 'object' && keyword['@type'] === 'URL') {
+            document.querySelector(`#${keywordPrefix}_id`).value = keyword['@id'] || '';
+        }
+
     });
 }

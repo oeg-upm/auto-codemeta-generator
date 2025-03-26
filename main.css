@@ -16,7 +16,12 @@
 .person {
     display: inline-block;
 }
-
+.keyword {
+    display: inline-block;
+    max-width: 250px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .role {
     display: flex;
     flex-wrap: wrap;
