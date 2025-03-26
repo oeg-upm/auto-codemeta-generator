@@ -116,7 +116,7 @@ sudo python3 -m http.server 80
 Install service with FAST API to migrate properties from SOMEF
 ```bash
 cd codemeta-generator/server/
-sudo apt install python3.12-venv
+sudo apt install python3.10-venv
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
@@ -125,6 +125,7 @@ pip install --upgrade pip
 Install from Pypi SOMEF, FASTAPI and UVICORN
 
 SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
+(default version is Python 3.10)
 
 ```bash
 pip install somef fastapi uvicorn

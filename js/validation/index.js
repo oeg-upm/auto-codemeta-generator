@@ -157,7 +157,7 @@ function migrateRemoteRepository() {
 
 }
 
-// Esto era con el json
+// this with pure json no codemeta
 function populateFields(metadata) {
 
     if (metadata.keywords && metadata.keywords.length > 0) {

@@ -45,7 +45,7 @@ See top-level LICENSE file for more information
             <p title="Url of the repository">
                 <label for="url_repo">Url</label>
                 <input type="text" name="url_repo" id="url_repo" aria-describedby="url_repository_descr"
-                    placeholder="https:github.com/You/reponame"/>
+                    placeholder="https://github.com/You/reponame"/>
 
                 <span class="field-description" id="url_repository_descr">URL of the source code repository to describe. GitHub and GitLab repositories supported</span>
                 <input type="button" id="downloadRepo" value="Complete properties from selected repository"
@@ -114,7 +114,7 @@ See top-level LICENSE file for more information
             <p title="Unique identifier">
                 <label for="identifier">Software unique identifier</label>
                 <input type="text" name="identifier" id="identifier"
-                    placeholder="Zenodo DOI" aria-describedby="identifier_descr" />
+                    placeholder="10.151.xxxxx, Zenodo DOI" aria-describedby="identifier_descr" />
 
                 <br />
                 <span class="field-description" id="identifier_descr">
@@ -441,10 +441,15 @@ Bugfixes: that and this." ></textarea>
         The authors acknowledge the OSCARS project, which has received funding from the European Commission's Horizon Europe Research and Innovation programme under grant agreement No. 101129751.
     </p>
 
-    <h3 style="text-align:right;">Contributed by</h3>
-    <p style="text-align:right; white-space: nowrap;">
-        <a href="https://www.softwareheritage.org/save-and-reference-research-software/" style="margin: 0;"><img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg" width="150" style="display:inline; margin: 0;"></a><a href="https://oeg.fi.upm.es/" style="margin: 0;"><img src="assets/logo.gif" alt="OEG logo" class="img-rounded" width="75" style="display:inline; margin: 0;"></a>  
-    </p>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+        <h3 style="margin: 0;">Contributed by</h3>
+        <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
+            <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg" width="150">
+        </a>
+        <a href="https://oeg.fi.upm.es/">
+            <img src="assets/logo.gif" alt="OEG logo" class="img-rounded" width="75">
+        </a>
+    </div>
   </footer>
 
   <script src="./js/libs/jsonld/jsonld.min.js"></script>
