@@ -124,7 +124,7 @@ pip install --upgrade pip
 
 Install from Pypi SOMEF, FASTAPI and UVICORN
 
-SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
+SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type (default version is Python 3.10):
 (default version is Python 3.10)
 
 ```bash
