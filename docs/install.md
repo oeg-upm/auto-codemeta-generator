@@ -13,9 +13,9 @@ sudo python3 -m http.server 80
 
 ## Install service with FAST API to migrate properties from SOMEF
 cd codemeta-generator/server/
-sudo apt install python3.12-venv
-python3 -m venv venv
-source venv/bin/activate
+sudo apt install python3.10-venv
+python3 -m venv venv310
+source venv310/bin/activate
 pip install --upgrade pip
 
 
