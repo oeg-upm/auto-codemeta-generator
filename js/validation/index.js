@@ -441,8 +441,8 @@ function populateFieldsCodemeta(metadata) {
         document.getElementById('softwareRequirements').value = softwareRequirements;
     }
 
-    if (metadata.developmentStatus && metadata.repository_status.length > 0) {
-        document.getElementById('developmentStatus').value = statusValue;
+    if (metadata.developmentStatus) {
+        document.getElementById('developmentStatus').value = metadata.developmentStatus;
     }
 
     if (metadata.author && metadata.author.length > 0) {
