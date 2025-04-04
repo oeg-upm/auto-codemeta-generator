@@ -1,6 +1,6 @@
-# Codemeta Generator
+# Auto-CodeMeta Generator
 
-Firts at all, This repository is an OEG (Ontology Engineering Group) development built upon the original Codemeta Generator.
+This repository is an extension of the Codemeta Generator to fill in the form automatically from a given GitHub or GitLab repository.
 
 This repository contains a (client-side) web application to generate
 CodeMeta documents (aka. `codemeta.json`).
