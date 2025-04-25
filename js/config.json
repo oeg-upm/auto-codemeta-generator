@@ -1,4 +1,4 @@
 {
-    "default_repo": "https://github.com/juanjemdIos/somef-demo-repo",
+    "default_repo": "https://github.com/sunpy/sunpy",
     "fastapi_url": "https://api.autocodemeta.linkeddata.es"
 }
