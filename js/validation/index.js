@@ -15,6 +15,8 @@
 // const FASTAPI_URL = 'http://127.0.0.1:7877'; 
 let CONFIG = {};
 
+let currentAuthorRefIndex = 0;
+
 fetch('./js/config.json')
     .then(response => response.json())
     .then(data => {
@@ -86,7 +88,6 @@ function getRepoDefault(event) {
 function parseAndValidateCodemeta(showPopup) {
     var codemetaText = document.querySelector('#codemetaText').innerText;
     var doc;
-
     try {
         doc = JSON.parse(codemetaText);
     }
@@ -276,14 +277,14 @@ function populateFields(metadata) {
         let authors = getAuthors(metadata.citation)
 
         if (authors.length > 0) {
-            populateAuthors(authors)
+            populateAuthors(authors, false)
         }   
     }
 }
 
 //it seems with codemeta.json we obtein less information than pure json. 
 function populateFieldsCodemeta(metadata) {
-
+  
     if (metadata.keywords) {
         if (typeof metadata.keywords === 'string') {
             metadata.keywords = metadata.keywords.split(',').map(k => k.trim());
@@ -292,16 +293,6 @@ function populateFieldsCodemeta(metadata) {
         }
         populateKeywords(metadata.keywords)
     }
-
-    // if (metadata.keywords) {
-    //     let keywords;
-    //     if (Array.isArray(metadata.keywords)) {
-    //         keywords = metadata.keywords.map(k => k.result.value).join(', ');
-    //     } else {
-    //         keywords = metadata.keywords; 
-    //     }
-    //     document.getElementById('keywords').value = keywords;
-    // }
 
     if (metadata.description) {
         let description;
@@ -368,7 +359,9 @@ function populateFieldsCodemeta(metadata) {
     if (metadata.codeRepository) {
         document.getElementById('codeRepository').value = metadata.codeRepository;
     }
-
+    if (metadata.continuousIntegration) {
+        document.getElementById('contIntegration').value = metadata.continuousIntegration;
+    }
     if (metadata.issueTracker) {
         document.getElementById('issueTracker').value = metadata.issueTracker;
     }
@@ -405,28 +398,30 @@ function populateFieldsCodemeta(metadata) {
 
    if (metadata.referencePublication && metadata.referencePublication.length > 0) {
 
-        const firstPublication = metadata.referencePublication[0]; // De momento nos quedamos con el primero
+        // TODO: For now, we only take the first reference we find, but in the future we need to find out a way to display all the references because it’s an array.
+        const firstPublication = metadata.referencePublication[0]; 
 
-        if (firstPublication.url) {
+        if (firstPublication.url) 
             document.getElementById('referencePublicationUrl').value = firstPublication.url;
-        }
-        if (firstPublication.name) {
+        if (firstPublication.name) 
             document.getElementById('publicationTitle').value = firstPublication.name;
-        }
-        if (firstPublication.identifier) {
+        if (firstPublication.identifier) 
             document.getElementById('publicationDOI').value = firstPublication.identifier;
-        }
-        if (firstPublication.issn) {
+        if (firstPublication.issn) 
             document.getElementById('issn').value = firstPublication.issn;
-        }
-        if (firstPublication.datePublished) {
+        if (firstPublication.datePublished)
             document.getElementById('publicationDatePublished').value = firstPublication.datePublished;
-        }
-        let relatedLinks = metadata.referencePublication
-            .map(pub => pub.url)
-            .filter((url, index, self) => url && self.indexOf(url) === index); 
-        document.getElementById('relatedLink').value = relatedLinks.join('\n');
+        if (firstPublication.author && firstPublication.author.length > 0) 
+            populateAuthors(firstPublication.author, true)
+
    }
+
+    if (metadata.relatedLinks){
+        let relatedLinks = metadata.relatedLinks
+        .map(pub => pub.url)
+        .filter((url, index, self) => url && self.indexOf(url) === index); 
+        document.getElementById('relatedLink').value = relatedLinks.join('\n');
+    } 
 
     if (metadata.programmingLanguage && metadata.programmingLanguage.length > 0) {
         const programmingLanguages = metadata.programmingLanguage.join(', ');
@@ -434,11 +429,19 @@ function populateFieldsCodemeta(metadata) {
     }
 
     if (metadata.softwareRequirements && metadata.softwareRequirements.length > 0) {
-        const softwareRequirements = metadata.softwareRequirements
-            .map(req => req.trim())
-            .filter(req => req !== '/' && req !== '')
-            .join(', ');
-        document.getElementById('softwareRequirements').value = softwareRequirements;
+        const softwareRequirementsArray = metadata.softwareRequirements
+        metadata.softwareRequirements.forEach(req => {
+            let name = "";
+            let version = "";
+    
+            if (typeof req === "string") {
+                name = req; 
+            } else {
+                name = req.name ? req.name : "";
+                version = req.version ? req.version : "";
+            }
+            addRowRequirements(name, version);
+        });
     }
 
     if (metadata.developmentStatus) {
@@ -446,15 +449,8 @@ function populateFieldsCodemeta(metadata) {
     }
 
     if (metadata.author && metadata.author.length > 0) {
-        populateAuthors(metadata.author)
+        populateAuthors(metadata.author, false)
     }
-    // if (metadata.citation && metadata.citation.length > 0) {
-    //     let authors = getAuthors(metadata.citation)
-
-    //     if (authors.length > 0) {
-    //         populateAuthors(authors)
-    //     }   
-    // }
 }
 
 function getAuthors(citation) {
@@ -484,7 +480,6 @@ function getAuthors(citation) {
 
                 if (familyNameMatch) {
                     if (currentAuthor) {
-                        // Guardar el autor actual en el mapa si tiene más información
                         const fullName = `${currentAuthor.familyName} ${currentAuthor.givenName}`;
                         if (authorsMap.has(fullName)) {
                             const existingAuthor = authorsMap.get(fullName);
@@ -530,30 +525,79 @@ function mergeAuthors(existingAuthor, newAuthor) {
     };
 }
 
-function populateAuthors(authors) {
-    // Eliminamos los autores que hayamos creado antes para no solapar
-    const authorContainer = document.querySelector('#author_container');
-    authorContainer.innerHTML = `
-        <legend>Authors</legend>
-        <input type="hidden" id="author_nb" value="0" />
-        <div id="addRemoveAuthor">
-            <input type="button" id="author_add" value="Add one" onclick="addPerson('author', 'Author');" />
-            <input type="button" id="author_remove" value="Remove last" onclick="removePerson('author');" />
-        </div>
-    `;
+function populateAuthors(authors, reference) {
+    // We remove the previously created authors to avoid overlap.”
+    if (reference) {
+        const authorReferenceContainer = document.querySelector('#author_reference_container');
+        authorReferenceContainer.innerHTML = `
+                <legend>Authors</legend>
+                <input type="hidden" id="author_reference_nb" value="0" />
+                <input type="hidden" id="current_author_reference_index" value="0" />
+
+                <div id="addRemoveAuthor">
+                    <button type="button" onclick="showPrevAuthorRef()">←</button>
+                    <input type="button" id="author_reference_add" value="Add one"
+                        onclick="addPerson('author_reference', 'Author_ref');" />
+                    <input type="button" id="author_reference_remove" value="Remove last"
+                        onclick="removePerson('author_reference', true);" />
+                    <button type="button" onclick="showNextAuthorRef()">→</button>
+                    <label id="authorCountLabel">Nº Authors: 0</label>
+                </div>
+        `;
+    } else {
+        const authorContainer = document.querySelector('#author_container');
+        authorContainer.innerHTML = `
+            <legend>Authors</legend>
+            <input type="hidden" id="author_nb" value="0" />
+            <div id="addRemoveAuthor">
+                <input type="button" id="author_add" value="Add one" onclick="addPerson('author', 'Author');" />
+                <input type="button" id="author_remove" value="Remove last" onclick="removePerson('author', true);" />
+            </div>
+        `;
+    }
+
 
     authors.forEach((author, index) => {
 
+        const authorType = author['@type'] || 'Person';
+        if (authorType !== "Person" && authorType !== "Organization") {
+            return; 
+        }
+        const personType = reference ? 'author_reference' : 'author';
+        const personId = addPerson(personType, 'Author');
+        const personPrefix = `${personType}_${personId}`;
+
+        // const personId = addPerson('author', 'Author');
+        // const personPrefix = `author_${personId}`;
+        // const authorType = author['@type'] || 'Person'; 
+        const typeSelect = document.querySelector(`#${personPrefix}_type`);
+      
+        if (typeSelect)
+            typeSelect.value = authorType;
+
         if (author['@type'] == 'Person'){
-            const personId = addPerson('author', 'Author');
-            const personPrefix = `author_${personId}`;
-    
+
             document.querySelector(`#${personPrefix}_familyName`).value = author.familyName || '';
-            document.querySelector(`#${personPrefix}_givenName`).value = author.givenName || personPrefix;
+            document.querySelector(`#${personPrefix}_givenName`).value = author.givenName || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
+            toggleAuthorType(personPrefix);
+        } else if (authorType === 'Organization') {
+
+            document.querySelector(`#${personPrefix}_name`).value = author.name || '';
+            document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
+            document.querySelector(`#${personPrefix}_email`).value = author.email || '';
+            toggleAuthorType(personPrefix);
         }
+  
+      
     });
+
+    if (authors.length > 0) {
+        currentAuthorRefIndex = 0;
+        document.getElementById('current_author_reference_index').value = currentAuthorRefIndex;
+        updateAuthorRefCarousel();
+    }
 }
 
 function populateKeywords(keywords) {
@@ -582,4 +626,73 @@ function populateKeywords(keywords) {
         }
 
     });
+}
+
+
+function updateAuthorRefCarousel() {
+
+    const container = document.getElementById('author_reference_container');
+    if (!container) return;
+
+    // Count just correct container
+    const authors = container.querySelectorAll('fieldset.person.leafFieldset');
+
+    if (authors.length === 0) return;
+
+    const indexInput = document.getElementById('current_author_reference_index');
+    currentAuthorRefIndex = parseInt(indexInput.value, 10) || 0;
+
+    currentAuthorRefIndex = Math.min(currentAuthorRefIndex, authors.length - 1);
+    currentAuthorRefIndex = Math.max(currentAuthorRefIndex, 0);
+    indexInput.value = currentAuthorRefIndex; 
+
+    authors.forEach(author => {
+        author.style.display = 'none';
+    });
+
+    const currentAuthor = authors[currentAuthorRefIndex];
+
+    if (currentAuthor) {
+        currentAuthor.style.display = 'block';
+
+        // call toggleAuthorType to adjust right visibility
+        toggleAuthorType(currentAuthor.id);
+    }
+
+    document.querySelector('button[onclick="showPrevAuthorRef()"]').disabled = (currentAuthorRefIndex === 0);
+    document.querySelector('button[onclick="showNextAuthorRef()"]').disabled = (currentAuthorRefIndex === authors.length - 1)
+
+}
+
+function showNextAuthorRef() {
+
+    const container = document.getElementById('author_reference_container');
+    if (!container) return;
+
+    const authors = container.querySelectorAll('fieldset.person.leafFieldset');
+    const total = authors.length;
+
+    if (total === 0) return;
+
+    currentAuthorRefIndex = Math.min(currentAuthorRefIndex + 1, authors.length - 1);
+    document.getElementById('current_author_reference_index').value = currentAuthorRefIndex;
+
+    updateAuthorRefCarousel();
+}
+
+function showPrevAuthorRef() {
+    const total = document.querySelectorAll('[id^="author_reference_"][id$="_type"]').length;
+    if (total === 0) return;
+
+    currentAuthorRefIndex = Math.max(currentAuthorRefIndex - 1, 0);
+    document.getElementById('current_author_reference_index').value = currentAuthorRefIndex;
+    updateAuthorRefCarousel();
+}
+
+function updateAuthorCount() {
+    const container = document.getElementById('author_reference_container');
+    if (!container) return;
+
+    const totalAuthors = container.querySelectorAll('fieldset.person.leafFieldset').length;
+    document.getElementById('authorCountLabel').textContent = `Nº Authors: ${totalAuthors}`;
 }

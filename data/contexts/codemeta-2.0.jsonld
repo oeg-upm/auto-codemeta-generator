@@ -55,7 +55,7 @@
       "runtimePlatform": { "@id": "schema:runtimePlatform"},
       "sameAs": { "@id": "schema:sameAs", "@type": "@id"},
       "softwareHelp": { "@id": "schema:softwareHelp"},
-      "softwareRequirements": { "@id": "schema:softwareRequirements", "@type": "@id"},
+      "softwareRequirements": { "@id": "schema:softwareRequirements"},
       "softwareVersion": { "@id": "schema:softwareVersion"},
       "sponsor": { "@id": "schema:sponsor"},
       "storageRequirements": { "@id": "schema:storageRequirements", "@type": "@id"},

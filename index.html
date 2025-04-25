@@ -70,7 +70,7 @@ See top-level LICENSE file for more information
 
             <p title="a brief description of the software">
                 <label for="description">Description</label>
-                <textarea rows="4" cols="50"
+                <textarea rows="10" cols="50"
                     name="description" id="description"
                     placeholder="My Software computes ephemerides and orbit propagation. It has been developed from early ´80." ></textarea>
             </p>
@@ -168,8 +168,6 @@ See top-level LICENSE file for more information
                 <br />
                 <span class="field-description" id="funder_descr">organization funding software development</span>
             </p>
-
-            Authors and contributors can be added below
         </fieldset>
 
         <fieldset id="fieldsetDevelopmentCommunity" class="leafFieldset">
@@ -196,7 +194,7 @@ See top-level LICENSE file for more information
             <p title="Related document, software, tools">
                 <label for="relatedLink">Related links</label>
                 <br />
-                <textarea rows="4" cols="50"
+                <textarea rows="10" cols="50"
                     name="relatedLink" id="relatedLink"></textarea>
         </fieldset>
 
@@ -222,13 +220,32 @@ See top-level LICENSE file for more information
             </p>
 
             <p title="Required software to run/use this one.">
-                <label for="softwareRequirements">Other software requirements</label>
+                <!-- <label for="softwareRequirementsLabel">Other software requirements</label> -->
+                <label>Other software requirements</label>
                 <br />
-                <textarea rows="4" cols="50"
+                <!-- <textarea rows="10" cols="50"
                     name="softwareRequirements" id="softwareRequirements"
                     placeholder=
-"Python 3.4
-https://github.com/psf/requests"></textarea>
+            "Python 3.4
+            https://github.com/psf/requests"></textarea> -->
+            <table name="softwareRequirements" id="softwareRequirements">
+                <thead>
+                    <tr>
+                        <th>Name/Text</th>
+                        <th>Version</th>
+                        <!-- <th><button onclick="addRowRequirements()">+</button></th> -->
+                        <th><input type="button" id="requirements_add" value="+"
+                        onclick="addRowRequirements();" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                     <!-- <tr>
+                        <td><input type="text" name="nameText"></td>
+                        <td><input type="text" name="version"></td>
+                        <td><button onclick="deleteRow(this)">-</button></td>
+                    </tr>  -->
+                </tbody>
+            </table>
         </fieldset>
 
         <fieldset id="fieldsetCurrentVersion" class="leafFieldset">
@@ -255,7 +272,7 @@ https://github.com/psf/requests"></textarea>
             <p title="a brief description of the software">
                 <label for="releaseNotes">Release notes</label>
                 <br />
-                <textarea rows="4" cols="50"
+                <textarea rows="10" cols="50"
                     name="releaseNotes" id="releaseNotes"
                     placeholder=
 "Change log: this and that;
@@ -302,6 +319,24 @@ Bugfixes: that and this." ></textarea>
                 <input type="text" name="publicationDatePublished" id="publicationDatePublished"
                     placeholder="Date Published" />
             </p>
+
+            Authors (either persons or organizations) can be added below
+            <fieldset class="persons" id="author_reference_container">
+                <legend>Authors</legend>
+                <input type="hidden" id="author_reference_nb" value="0" />
+                <input type="hidden" id="current_author_reference_index" value="0" />
+
+                <div id="addRemoveAuthor">
+                    <button type="button" onclick="showPrevAuthorRef()">←</button>
+                    <input type="button" id="author_reference_add" value="Add one"
+                        onclick="addPerson('author_reference', 'Author_ref');" />
+                    <input type="button" id="author_reference_remove" value="Remove last"
+                        onclick="removePerson('author_reference', true);" />
+                    <button type="button" onclick="showNextAuthorRef()">→</button>
+                    <label id="authorCountLabel">Nº Authors: 0</label>
+                </div>
+                
+            </fieldset>
             <!-- <p title="Part or facet of the object being review ">
                 <label for="reviewAspect">Review aspect</label>
                 <input type="text" name="reviewAspect" id="reviewAspect"
@@ -363,7 +398,7 @@ Bugfixes: that and this." ></textarea>
                     <input type="button" id="keyword_add" value="Add one"
                         onclick="addKeyword()" />
                     <input type="button" id="keyword_remove" value="Remove last"
-                        onclick="removeKeyword()" />
+                        onclick="removeKeyword(true)" />
                 </div>
             </fieldset>
 
@@ -375,7 +410,7 @@ Bugfixes: that and this." ></textarea>
                     <input type="button" id="author_add" value="Add one"
                         onclick="addPerson('author', 'Author');" />
                     <input type="button" id="author_remove" value="Remove last"
-                        onclick="removePerson('author');" />
+                        onclick="removePerson('author', true);" />
                 </div>
             </fieldset>
 
@@ -389,7 +424,7 @@ Bugfixes: that and this." ></textarea>
                     <input type="button" id="contributor_add" value="Add one"
                         onclick="addPerson('contributor', 'Contributor');" />
                     <input type="button" id="contributor_remove" value="Remove last"
-                        onclick="removePerson('contributor');" />
+                        onclick="removePerson('contributor', true);" />
                 </div>
             </fieldset>
         </div>
@@ -459,12 +494,12 @@ Bugfixes: that and this." ></textarea>
 
       SPDX_LICENSES = licenses;
       SPDX_LICENSE_IDS = licenses.map(license => license['licenseId']);
-
       initJsonldLoader(contexts);
       initFields();
       initCallbacks();
       loadStateFromStorage();
     });
+
   </script>
 </body>
 </html>

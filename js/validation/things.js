@@ -120,7 +120,6 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
             return true;
         }
     }
-
     for (expectedType in typeFieldValidators) {
         if (isCompactTypeEqual(documentType, expectedType)) {
             var fieldValidators = typeFieldValidators[expectedType];
@@ -361,9 +360,11 @@ var personFieldValidators = {
 
 
 var organizationFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
-
+    // "@id": validateUrl,
+    // "id": validateUrl,
+    "@id": validateUrlOrBlankNode,
+    "id": validateUrlOrBlankNode,
+    
     "email": validateText,
     "identifier": validateUrls,
     "name": validateText,

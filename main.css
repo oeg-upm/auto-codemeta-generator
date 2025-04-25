@@ -57,7 +57,9 @@ p input, p textarea {
     display: flex;
     justify-content: space-between;
 }
-
+.moveButtons {
+    margin-bottom: 10px;
+}
 #license {
     /* License names are long */
     min-width: 20em;
@@ -94,3 +96,73 @@ input:invalid {
 .selected-license {
     margin: 2px;
 }
+
+.tabs {
+    margin-bottom: 10px;
+}
+.tab-btn {
+    background: #ddd;
+    border: 1px solid #aaa;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.tab-btn.active {
+    background: #bbb;
+    font-weight: bold;
+}
+
+/* ----- Software requirements table----- */
+
+#softwareRequirements {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#softwareRequirements th,
+#softwareRequirements td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 8px; 
+}
+
+#softwareRequirements th {
+    font-weight: normal;
+    border: 1px solid #ddd; 
+}
+
+#softwareRequirements th:first-child,
+#softwareRequirements td:first-child {
+    width: 75%;
+}
+
+#softwareRequirements th:nth-child(2),
+#softwareRequirements td:nth-child(2) {
+    width: 20%;
+}
+
+#softwareRequirements th:nth-child(3),
+#softwareRequirements td:nth-child(3) {
+    width: 5%;
+}
+
+#softwareRequirements input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#softwareRequirements th button,
+#softwareRequirements td button {
+    font-size: 14px;
+    padding: 4px 6px;
+    width: 25px;
+    height: 25px;
+}
+
+#softwareRequirements th button {
+    display: inline-block; 
+}
+
+#softwareRequirements button {
+    cursor: pointer;
+}
+
