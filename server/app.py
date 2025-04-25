@@ -1,10 +1,10 @@
 import json
 import os
+import somef
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from somef.somef_cli import run_cli
-
 
 app = FastAPI()
 
@@ -24,6 +24,10 @@ app.add_middleware(
 # @app.options("/metadata")
 # async def options_metadata():
 #     return JSONResponse(status_code=200)
+@app.get("/version")
+async def get_version():
+    version = somef.__version__
+    return {"somef_version": version}
 
 # get metadata from somef
 @app.get("/metadata")
