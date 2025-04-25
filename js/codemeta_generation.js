@@ -33,6 +33,8 @@ const loadContextData = async () => {
         contextV3["@context"]["author"] = {"@id": "schema:author", "@container": "@list"};
         contextV2["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
         contextV3["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
+        contextV2["@context"]["softwareRequirements"] = {"@id": "schema:softwareRequirements", "@container": "@list"};
+        contextV3["@context"]["softwareRequirements"] = {"@id": "schema:softwareRequirements", "@container": "@list"};
         contextV2["@context"]["id"] = "@id";
         contextV2["@context"]["type"] = "@type";
     return {
@@ -75,9 +77,14 @@ function getIfSet(query) {
 }
 
 function setIfDefined(query, value) {
-    if (value !== undefined) {
+    if (value !== undefined) {       
         document.querySelector(query).value = value;
     }
+}
+
+function getSelectedTypeAuthor(prefix) {
+    const selectElement = document.querySelector(`#${prefix}_type`);
+    return selectElement ? selectElement.value : undefined;
 }
 
 function getLicenses() {
@@ -113,7 +120,8 @@ const splittedCodemetaFields = [
     ['programmingLanguage', ','],
     ['runtimePlatform', ','],
     ['operatingSystem', ','],
-    ['softwareRequirements', '\n'],
+    // ['softwareRequirements', '\n'],
+    // ['softwareRequirements', ','],
     ['relatedLink', '\n'],
 ]
 
@@ -124,6 +132,11 @@ const directPersonCodemetaFields = [
     'familyName',
     'email',
     'affiliation',
+];
+
+const directOrganizationCodemetaFields = [
+    'name',
+    'email'
 ];
 
 const directRoleCodemetaFields = [
@@ -140,6 +153,8 @@ const directReviewCodemetaFields = [
     'publicationDOI',
     "issn",
     "publicationDatePublished"
+    // ,
+    // "author"
 
 ];
 
@@ -174,16 +189,26 @@ function generateShortOrg(fieldName) {
 }
 
 function generatePerson(idPrefix) {
+
     var doc = {
-        "@type": "Person",
+        "@type": getSelectedTypeAuthor(idPrefix) || "Person", // Use the selection or ‘Person’ by default.
     }
     const id = getIfSet(`#${idPrefix}_id`);
-    doc["@id"] = id? id : generateBlankNodeId(idPrefix);
-    directPersonCodemetaFields.forEach(function (item, index) {
-        doc[item] = getIfSet(`#${idPrefix}_${item}`);
-    });
-    doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`);
 
+    if (id !== undefined)
+        doc["@id"] = id ? id : generateBlankNodeId(idPrefix);
+
+    if (doc["@type"] == "Person") {
+
+        directPersonCodemetaFields.forEach(function (item, index) {
+            doc[item] = getIfSet(`#${idPrefix}_${item}`);
+        });
+        doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`);
+    } else {
+        directOrganizationCodemetaFields.forEach(function (item, index) {
+            doc[item] = getIfSet(`#${idPrefix}_${item}`);
+        });
+    }
     return doc;
 }
 
@@ -218,9 +243,14 @@ function generateRole(id) {
     const doc = {
         "@type": "Role"
     };
-    directRoleCodemetaFields.forEach(function (item, index) {
-        doc[item] = getIfSet(`#${id} .${item}`);
-    });
+
+    if (id.includes("_reference_")) {
+        doc['roleName'] = getIfSet(`#${id} .${'roleName'}`);
+    }else {    
+        directRoleCodemetaFields.forEach(function (item, index) {
+            doc[item] = getIfSet(`#${id} .${item}`);
+        });
+    }  
     return doc;
 }
 
@@ -265,12 +295,55 @@ function generateKeywords() {
     return keywords;
 }
 
+function generateSoftwareRequirements() {
+    var softwareRequirements = [];
+    var tableBody = document.querySelector("#softwareRequirements tbody");
+    var rows = tableBody.querySelectorAll("tr"); 
+
+    rows.forEach(row => {
+        const requirement = generateSoftwareRequirement(row);
+        if (requirement !== undefined) { 
+            softwareRequirements.push(requirement);
+        }
+    });
+
+    return Array.isArray(softwareRequirements) ? softwareRequirements : [softwareRequirements];
+}
+
+// function getNbRequirements() {
+//     var tableBody = document.querySelector("#softwareRequirements tbody");
+//     var rowCount = tableBody.querySelectorAll("tr").length;
+//     return rowCount;
+// }
+
+function generateSoftwareRequirement(row) {
+    const cells = row.getElementsByTagName("td");
+    
+    if (cells.length < 2) return undefined; 
+    
+    const name = cells[0].querySelector("input")?.value.trim();
+    const version = cells[1].querySelector("input")?.value.trim();
+    
+    if (!name && !version) {
+        return undefined;
+    }
+
+    if (name && version) {
+        return {
+            "name": name,
+            "version": version
+        };
+    }
+
+    return name || version;
+}
 function generateReferencePublications() {
+
     var publications = [];
     var nbPublications = getNbReferencePublications();
     for (let pubId = 1; pubId <= nbPublications; pubId++) {
         const publication = generateReferencePublication(pubId);
-        if (publication.identifier || publication.url || publication.name || publication.datePublished || publications.issn) {
+        if (publication.identifier || publication.url || publication.name || publication.datePublished || publications.issn || publications.author) {
             publications.push(publication);
         }
     }
@@ -286,7 +359,10 @@ function generateReferencePublication(pubId) {
     doc["name"] = getIfSet(`#publicationTitle`);
     doc["datePublished"] = getIfSet(`#publicationDatePublished`);
     doc["issn"] = getIfSet(`#issn`);
-
+    var authors = generatePersons('author_reference');
+    if (authors.length > 0) {
+        doc["author"] = authors;
+    }
     return doc;
 }
 function getNbReferencePublications() {
@@ -352,11 +428,16 @@ async function buildExpandedDocWithAllContexts() {
     if (keywords.length > 0) {
         doc["keywords"] = keywords;
     }   
+    var softwareRequirements = generateSoftwareRequirements();
+    if (softwareRequirements.length > 0) {
+        doc["softwareRequirements"] = [...softwareRequirements];
+    } 
     for (const [key, items] of Object.entries(crossCodemetaFields)) {
         items.forEach(item => {
            doc[item] = doc[key]; 
         }); 
     }
+
     return await jsonld.expand(doc);
 }
 
@@ -365,7 +446,6 @@ async function generateCodemeta(codemetaVersion = "2.0") {
 
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
-
     if (inputForm.checkValidity()) {
         // Expand document with all contexts before compacting
         // to allow generating property from any context
@@ -384,10 +464,10 @@ async function generateCodemeta(codemetaVersion = "2.0") {
                     delete obj.type;
                 }
                 for (const key in obj) {
-                    transformIdAndType(obj[key]); // Recursión para objetos anidados
+                    transformIdAndType(obj[key]);
                 }
             } else if (Array.isArray(obj)) {
-                obj.forEach(transformIdAndType); // Recursión para arrays
+                obj.forEach(transformIdAndType); 
             }
         }
 
@@ -413,6 +493,7 @@ async function generateCodemeta(codemetaVersion = "2.0") {
     // If this finds a validation, it means there is a bug in our code (either
     // generation or validation), and the generation MUST NOT generate an
     // invalid codemeta file, regardless of user input.
+
     if (codemetaText && !validateDocument(JSON.parse(codemetaText))) {
         alert('Bug detected! The data you wrote is correct; but for some reason, it seems we generated an invalid codemeta.json. Please report this bug at https://github.com/codemeta/codemeta-generator/issues/new and copy-paste the generated codemeta.json file. Thanks!');
     }
@@ -469,9 +550,14 @@ function getSingleAuthorsFromRoles(docs) {
 function importRoles(personPrefix, roles) {
     roles.forEach(role => {
         const roleId = addRole(`${personPrefix}`);
-        directRoleCodemetaFields.forEach(item => {
-            setIfDefined(`#${personPrefix}_${item}_${roleId}`, role[item]);
-        });
+
+        if (personPrefix.includes("_reference_")) {
+            setIfDefined(`#${personPrefix}_${'roleName'}_${roleId}`, role['roleName']);
+        }else {    
+            directRoleCodemetaFields.forEach(item => {
+                setIfDefined(`#${personPrefix}_${item}_${roleId}`, role[item]);
+            });
+        }  
     });
 }
 
@@ -495,12 +581,38 @@ function importKeywords(keywords) {
     });
 }
 
+function importRequirements(requirements) {
+    if (requirements === undefined) {
+        return;
+    }
+    const requirementsArray = Array.isArray(requirements) ? requirements : [requirements];
+
+    requirementsArray.forEach((req) => {
+        let name = "";
+        let version = "";
+        if (typeof req === "string") {
+            name = req;
+        } else {
+            name = req.name ? req.name : "";
+            version = req.version ? req.version : "";
+        }
+        addRowRequirements(name, version);
+    });
+}
+
 function importPersons(prefix, legend, docs) {
     if (docs === undefined) {
         return;
     }
+    // const authors = docs.filter(doc => getDocumentType(doc) === "Person");
+    const authors = docs.filter(doc => {
+        const type = getDocumentType(doc);
+        return (type === "Person" || type === "Organization") && doc.id;
+    });
 
-    const authors = docs.filter(doc => getDocumentType(doc) === "Person");
+    if (authors.length == 0 ) 
+        return;
+
     const authorsFromRoles = getSingleAuthorsFromRoles(docs);
     const allAuthorDocs = authors.concat(authorsFromRoles)
         .reduce((authors, currentAuthor) => {
@@ -509,23 +621,36 @@ function importPersons(prefix, legend, docs) {
             }
             return authors;
         }, []);
+     
+    if (allAuthorDocs.length > 0 ) {
+        allAuthorDocs.forEach(function (doc, index) {
+            var personId = addPerson(prefix, legend);
+            const authorType = doc['type'] || 'Person'; 
+            const personPrefix = `${prefix}_${personId}`;
+            const typeSelect = document.querySelector(`#${personPrefix}_type`);
+    
+            if (typeSelect)
+                typeSelect.value = authorType;
+    
+            if (!isBlankNodeId(getDocumentId(doc))) {
+                setIfDefined(`#${prefix}_${personId}_id`, getDocumentId(doc));
+            }
+            directPersonCodemetaFields.forEach(function (item, index) {
+                setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
+            });
+    
+            importShortOrg(`#${prefix}_${personId}_affiliation`, doc['affiliation']);
+            
+            const roles = docs
+                .filter(currentDoc => getDocumentType(currentDoc) === "Role")
+                .filter(currentDoc => authorsEqual(currentDoc["schema:author"], doc));
 
-    allAuthorDocs.forEach(function (doc, index) {
-        var personId = addPerson(prefix, legend);
-
-        if (!isBlankNodeId(getDocumentId(doc))) {
-            setIfDefined(`#${prefix}_${personId}_id`, getDocumentId(doc));
-        }
-        directPersonCodemetaFields.forEach(function (item, index) {
-            setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
+            importRoles(`${prefix}_${personId}`, roles);
+    
+            toggleAuthorType(personPrefix);
         });
+    }
 
-        importShortOrg(`#${prefix}_${personId}_affiliation`, doc['affiliation']);
-
-        const roles = docs.filter(currentDoc => getDocumentType(currentDoc) === "Role")
-            .filter(currentDoc => authorsEqual(currentDoc["schema:author"], doc));
-        importRoles(`${prefix}_${personId}`, roles);
-    });
 }
 
 async function recompactDocWithAllContexts(doc) {
@@ -544,7 +669,7 @@ async function importCodemeta() {
     // Re-compact document with all contexts
     // to allow importing property from any context
     doc = await recompactDocWithAllContexts(doc);
-
+    
     resetForm();
 
     if (doc['license'] !== undefined) {
@@ -601,8 +726,38 @@ async function importCodemeta() {
         const contributors = Array.isArray(doc['contributor'])? doc['contributor'] : [doc['contributor']];
         importPersons('contributor', 'Contributor', contributors);
     }
+    if (doc['referencePublication']) {
+        importReferencePublication(doc['referencePublication']);
+    }
+    if (doc['softwareRequirements']) {
+        importRequirements(doc['softwareRequirements'])
+    }
 }
 
+function importReferencePublication(references) {
+    if (references === undefined) {
+        return;
+    }
+    references.forEach((reference, index) => {
+        //TODO: will be an array like keywords and author in the future. Right now we manage just the first reference
+        // referencePublicationUrl
+        // publicationTitle
+        // publicationDOI
+        // issn
+        // publicationDatePublished
+        document.querySelector(`#referencePublicationUrl`).value = reference['@id'] || '';
+        document.querySelector(`#publicationTitle`).value = reference.name || '';
+        document.querySelector(`#publicationDatePublished`).value = reference.datePublished || '';
+        document.querySelector(`#issn`).value = reference.issn || '';
+       
+        if (reference.author && reference.author.length > 0) {         
+            importPersons('author_reference', 'Author_ref', reference.author);
+        }
+
+
+
+    });
+}
 function loadStateFromStorage() {
     var codemetaText = sessionStorage.getItem('codemetaText')
     if (codemetaText) {
@@ -619,4 +774,6 @@ function downloadCodemeta() {
     document.querySelector('#downloadCodemeta').download = "codemeta.json";
     URL.revokeObjectURL(url);
 }
+
+
 

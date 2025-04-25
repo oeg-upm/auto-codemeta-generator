@@ -42,14 +42,20 @@ async def get_metadata(repo_url: str = Query(..., alias="url"), threshold: float
             codemeta_out=path+dict_filename.get("codemeta")
         )
         
+        # ---------IN CASE TO RETURN METADATA INSTEAD OF CODEMETA
         # with open(path+dict_filename.get("json"), "r") as file:
         #     metadata = json.load(file)
 
         # return JSONResponse(content=metadata)
-    
+        # --------- 
+
         with open(path+dict_filename.get("codemeta"), "r") as file:
             codemeta = json.load(file)
 
+        # with open("./generated-files/codemeta_1.json", "r") as file:
+        #     codemeta = json.load(file)
+
+        # print(codemeta)
         return JSONResponse(content=codemeta)
 
     except Exception as e:
