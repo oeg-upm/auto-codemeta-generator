@@ -441,8 +441,8 @@ async function buildExpandedDocWithAllContexts() {
     return await jsonld.expand(doc);
 }
 
-// v2.0 is still default version for generation, for now
-async function generateCodemeta(codemetaVersion = "2.0") {
+// change to v3.0 as default
+async function generateCodemeta(codemetaVersion = "3.0") {
 
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;

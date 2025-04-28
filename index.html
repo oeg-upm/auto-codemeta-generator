@@ -473,6 +473,7 @@ Bugfixes: that and this." ></textarea>
         <a href="https://w3id.org/codemeta/3.0">v3.0</a>
         <br />
         <p id="version_somef" style="text-align:center;">getting somef version...</p>
+        <p id="release_codemeta_generator" style="text-align:center;">getting latest release...</p>
         <br />
         The authors acknowledge the OSCARS project, which has received funding from the European Commission's Horizon Europe Research and Innovation programme under grant agreement No. 101129751.
     </p>
@@ -513,6 +514,18 @@ Bugfixes: that and this." ></textarea>
     })
     .catch(error => console.error('Error fetching version:', error));
 
+    fetch('js/config.json') 
+    .then(response => response.json())
+    .then(config => {
+        const apiUrl = config.fastapi_url + '/latest_release'; 
+        return fetch(apiUrl);  
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('release_codemeta_generator').innerText = 
+            `Autocodemeta Generator latest release: ${data}`;
+    })
+    .catch(error => console.error('Error fetching version:', error));
   </script>
 </body>
 </html>

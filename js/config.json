@@ -1,4 +1,5 @@
 {
     "default_repo": "https://github.com/sunpy/sunpy",
-    "fastapi_url": "https://api.autocodemeta.linkeddata.es"
-}
+    "fastapi_url": "https://api.autocodemeta.linkeddata.es",
+    "project_repository": "https://github.com/oeg-upm/auto-codemeta-generator"
+}   
