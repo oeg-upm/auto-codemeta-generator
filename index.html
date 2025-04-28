@@ -514,7 +514,7 @@ Bugfixes: that and this." ></textarea>
     })
     .catch(error => console.error('Error fetching version:', error));
 
-    fetch('js/config_local.json') 
+    fetch('js/config.json') 
     .then(response => response.json())
     .then(config => {
         const apiUrl = config.fastapi_url + '/latest_release'; 
