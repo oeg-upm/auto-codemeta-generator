@@ -452,42 +452,45 @@ Bugfixes: that and this." ></textarea>
     <pre contentEditable="true" id="codemetaText"></pre>
   </main>
 
-  <footer>
-    <p style="text-align:center;">
-        Do you want to improve this tool ?
-        <!-- Check out the
-        <a href="https://github.com/codemeta/codemeta-generator">
-            CodeMeta-generator repository</a>
-        <br /> -->
-        Check out the 
-        <a href="https://github.com/oeg-upm/auto-codemeta-generator">
-            Auto-Codemeta repository</a>
-        <br />
-        Join the
-        <a href="https://github.com/codemeta/codemeta">CodeMeta community</a>
-        discussion
-        <br />
-        The CodeMeta vocabulary -
-        <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a>
-        -
-        <a href="https://w3id.org/codemeta/3.0">v3.0</a>
-        <br />
-        <p id="version_somef" style="text-align:center;">getting somef version...</p>
-        <p id="release_codemeta_generator" style="text-align:center;">getting latest release...</p>
-        <br />
-        The authors acknowledge the OSCARS project, which has received funding from the European Commission's Horizon Europe Research and Innovation programme under grant agreement No. 101129751.
+<footer style="font-size: 0.9em; margin-top: 2em; padding: 0 2em;">
+  <div style="text-align: center;">
+    <p>
+      Do you want to improve this tool?
+      Check out the 
+      <a href="https://github.com/oeg-upm/auto-codemeta-generator">
+        Auto-Codemeta repository</a>.
+      Join the
+      <a href="https://github.com/codemeta/codemeta">CodeMeta community</a>
+      discussion.
     </p>
 
-    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-        <h3 style="margin: 0;">Contributed by</h3>
-        <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
-            <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg" width="150">
-        </a>
-        <a href="https://oeg.fi.upm.es/">
-            <img src="assets/logo.gif" alt="OEG logo" class="img-rounded" width="75">
-        </a>
+    <p>
+      <strong>CodeMeta vocabulary:</strong>
+      <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a> / 
+      <a href="https://w3id.org/codemeta/3.0">v3.0</a>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <span id="version_somef">getting somef version...</span>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <span id="release_codemeta_generator">getting latest release...</span>
+    </p>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap;">
+    <p style="margin: 0; padding: 0 1em; max-width: 700px; text-align: center;"">
+      The authors acknowledge the OSCARS project, which has received funding from the European Commission's Horizon Europe Research and Innovation programme under grant agreement No. 101129751.
+    </p>
+
+    <div style="display: flex; align-items: center; gap: 10px; margin: 10px 1em 0 1em;">
+      <span style="font-weight: bold;">Contributed by</span>
+      <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
+        <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg" width="130">
+      </a>
+      <a href="https://oeg.fi.upm.es/">
+        <img src="assets/logo.gif" alt="OEG logo" class="img-rounded" width="65">
+      </a>
     </div>
-  </footer>
+  </div>
+</footer>
 
   <script src="./js/libs/jsonld/jsonld.min.js"></script>
   <script>
@@ -510,7 +513,7 @@ Bugfixes: that and this." ></textarea>
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('version_somef').innerText = `Somef version: ${data.somef_version}`;
+        document.getElementById('version_somef').innerHTML = `<strong>Somef version:</strong> ${data.somef_version}`;
     })
     .catch(error => console.error('Error fetching version:', error));
 
@@ -518,12 +521,24 @@ Bugfixes: that and this." ></textarea>
     .then(response => response.json())
     .then(config => {
         const apiUrl = config.fastapi_url + '/latest_release'; 
+        console.log(apiUrl)
         return fetch(apiUrl);  
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('release_codemeta_generator').innerText = 
-            `Autocodemeta Generator latest release: ${data}`;
+        console.log('Release data:', data);
+        // document.getElementById('release_codemeta_generator').innerText = 
+        //     `Autocodemeta Generator latest release: ${data}`;
+
+        const element = document.getElementById('release_codemeta_generator');
+        
+        if (typeof data === 'string') {
+            element.innerHTML = `<strong>Autocodemeta Generator latest release:</strong> ${data}`;
+        } else if (data.detail) {
+            element.innerHTML = '<strong>Autocodemeta Generator latest release:</strong> No release available';
+        } else {
+            element.innerHTML = '<strong>Autocodemeta Generator latest release:</strong> Unknown';
+        }
     })
     .catch(error => console.error('Error fetching version:', error));
   </script>
