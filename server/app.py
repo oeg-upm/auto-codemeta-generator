@@ -48,10 +48,8 @@ async def get_latest_release():
         print(response.status_code)
         return response.json().get("tag_name", "No releases")
     elif response.status_code == 404:
-        print("No releases: " + response.status_code)
         return "No releases"
     else:
-
         return f"Error {response.status_code}"
     # else:
     #     return f"Error {response.status_code}: {response.json().get('message', 'Unknown error')}"
