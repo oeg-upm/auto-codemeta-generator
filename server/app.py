@@ -46,11 +46,13 @@ async def get_latest_release():
     response = requests.get(api_url)
     if response.status_code == 200:
         print(response.status_code)
-        print(response.status_code)
-        print(response.json())
         return response.json().get("tag_name", "No releases")
+    elif response.status_code == 404:
+        return "No releases"
     else:
-        return f"Error {response.status_code}: {response.json().get('message', 'Unknown error')}"
+        return f"Error {response.status_code}"
+    # else:
+    #     return f"Error {response.status_code}: {response.json().get('message', 'Unknown error')}"
 
 # get metadata from somef
 @app.get("/metadata")
