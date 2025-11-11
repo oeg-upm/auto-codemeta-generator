@@ -320,8 +320,8 @@ function populateFieldsCodemeta(metadata) {
 
     if (metadata.identifier) {
         let identifier;
-        if (Array.isArray(metadata.identifier)) {
-            identifier = metadata.identifier.map(id => id.result.value).join(', ');
+        if (Array.isArray(metadata.identifier)) {         
+            identifier = metadata.identifier.join(', ');
         } else {
             identifier = metadata.identifier; 
         }
