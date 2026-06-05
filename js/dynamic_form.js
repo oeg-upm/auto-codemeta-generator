@@ -62,17 +62,17 @@ function createPersonFieldset(personPrefix, legend) {
         </div>
 
         <p>
-            <label for="${personPrefix}_givenName">Given name</label>
-            <input type="text" id="${personPrefix}_givenName" name="${personPrefix}_givenName"
-                placeholder="Jane" />
-        </p>
-        <p style="display: none;>
             <label for="${personPrefix}_name">Name</label>
-            <input type="text" id="${personPrefix}_name" name="${personPrefix}_name"
+            <input type="text" id="${personPrefix}_name" name="${personPrefix}_name" readonly
                 placeholder="Organization" />
         </p>
         <p>
-            <label for="${personPrefix}_familyName">Family name</label>
+            <label for="${personPrefix}_givenName">Given name<small> (editable)</small></label>
+            <input type="text" id="${personPrefix}_givenName" name="${personPrefix}_givenName"
+                placeholder="Jane" />
+        </p>
+        <p>
+            <label for="${personPrefix}_familyName">Family name<small> (editable)</small></label>
             <input type="text" id="${personPrefix}_familyName" name="${personPrefix}_familyName"
                 placeholder="Doe" />
         </p>      
@@ -525,6 +525,7 @@ function toggleAuthorType(prefix) {
     const familyNameField = document.getElementById(`${prefix}_familyName`)?.parentElement;
     const affiliationField = document.getElementById(`${prefix}_affiliation`)?.parentElement;
     const nameField = document.getElementById(`${prefix}_name`)?.parentElement;
+    const nameInput = document.getElementById(`${prefix}_name`);
 
     if (givenNameField) givenNameField.style.display = isPerson ? "block" : "none";
     if (familyNameField) familyNameField.style.display = isPerson ? "block" : "none";
@@ -539,10 +540,10 @@ function toggleAuthorType(prefix) {
     if (!isPerson && familyNameInput) familyNameInput.value = "";
 
     const affiliationInput = document.getElementById(`${prefix}_affiliation`);
-    if (!isPerson && affiliationInput) affiliationInput.value = "";
 
-    // const nameInput = document.getElementById(`${prefix}_name`);
-    // if (isPerson && nameInput) nameInput.value = "";
+    if (nameInput) nameInput.readOnly = isPerson;
+
+    if (!isPerson && affiliationInput) affiliationInput.value = "";
 
 }
 
