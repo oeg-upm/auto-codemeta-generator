@@ -581,12 +581,21 @@ function populateAuthors(authors, reference) {
             typeSelect.value = authorType;
 
         if (author['@type'] == 'Person'){
+            let { givenName, familyName, name } = author;
 
-            document.querySelector(`#${personPrefix}_familyName`).value = author.familyName || '';
-            document.querySelector(`#${personPrefix}_givenName`).value = author.givenName || '';
+            if (name && !givenName && !familyName) {
+                const parts = name.trim().split(' ');
+                familyName = parts.pop();
+                givenName = parts.join(' ');
+            }
+            else if (!name && givenName && familyName) {
+                name = `${givenName} ${familyName}`;
+            }
+            document.querySelector(`#${personPrefix}_familyName`).value = familyName || '';
+            document.querySelector(`#${personPrefix}_givenName`).value = givenName || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
-            document.querySelector(`#${personPrefix}_name`).value = author.name || '';
+            document.querySelector(`#${personPrefix}_name`).value = name || '';
             toggleAuthorType(personPrefix);
         } else if (authorType === 'Organization') {
 
