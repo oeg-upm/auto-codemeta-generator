@@ -130,6 +130,7 @@ const splittedCodemetaFields = [
 const directPersonCodemetaFields = [
     'givenName',
     'familyName',
+    'name',
     'email',
     'affiliation',
 ];
@@ -195,8 +196,8 @@ function generatePerson(idPrefix) {
     }
     const id = getIfSet(`#${idPrefix}_id`);
 
-    if (id !== undefined)
-        doc["@id"] = id ? id : generateBlankNodeId(idPrefix);
+    // if (id !== undefined)
+    doc["@id"] = id ? id : generateBlankNodeId(idPrefix);
 
     if (doc["@type"] == "Person") {
 
@@ -382,7 +383,7 @@ function generateReview() {
 async function buildExpandedDocWithAllContexts() {
     var doc = {
         "@context": getAllCodemetaContextUrls(),
-        "@type": "SoftwareSourceCode",
+        "@type": "SoftwareSourceCode"
     };
 
     let licenses = getLicenses();
@@ -443,7 +444,8 @@ async function buildExpandedDocWithAllContexts() {
 
 // change to v3.0 as default
 async function generateCodemeta(codemetaVersion = "3.0") {
-
+     if (skipAutoGenerate) return;
+     
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
     if (inputForm.checkValidity()) {
@@ -472,6 +474,7 @@ async function generateCodemeta(codemetaVersion = "3.0") {
         }
 
         transformIdAndType(compacted);
+        compacted["@type"] = ["SoftwareSourceCode", "SoftwareApplication"];
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
@@ -607,7 +610,8 @@ function importPersons(prefix, legend, docs) {
     // const authors = docs.filter(doc => getDocumentType(doc) === "Person");
     const authors = docs.filter(doc => {
         const type = getDocumentType(doc);
-        return (type === "Person" || type === "Organization") && doc.id;
+        // return (type === "Person" || type === "Organization") && doc.id;
+        return (type === "Person" || type === "Organization");
     });
 
     if (authors.length == 0 ) 
@@ -668,8 +672,9 @@ async function importCodemeta() {
 
     // Re-compact document with all contexts
     // to allow importing property from any context
+    skipAutoGenerate = true; 
     doc = await recompactDocWithAllContexts(doc);
-    
+  
     resetForm();
 
     if (doc['license'] !== undefined) {
@@ -732,6 +737,9 @@ async function importCodemeta() {
     if (doc['softwareRequirements']) {
         importRequirements(doc['softwareRequirements'])
     }
+
+    skipAutoGenerate = false; 
+
 }
 
 function importReferencePublication(references) {

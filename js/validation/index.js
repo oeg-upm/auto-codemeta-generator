@@ -133,6 +133,7 @@ function migrateRemoteRepository() {
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
     fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)
+    // fetch('./server/generated-files/somef_code_authors.json')
     .then(response => {
 
         if (!response.ok) {
@@ -142,7 +143,7 @@ function migrateRemoteRepository() {
     })
     .then(metadata => {
         spinner.style.display = 'none';
-
+        // console.log('METADATA RECEIVED:', JSON.stringify(metadata, null, 2));
         populateFieldsCodemeta(metadata);
 
         setTimeout(() => {
@@ -177,9 +178,9 @@ function populateFields(metadata) {
         const identifier = metadata.identifier[0].result.value;
         document.getElementById('identifier').value = identifier;
     }
-    if (metadata.type && metadata.type.length > 0) {
-        const type = metadata.type;
-        document.getElementById('applicationCategory').value = type;
+    if (metadata.application_domain && metadata.application_domain.length > 0) {
+        const applicationCategory = metadata.application_domain[0].result.value;
+        document.getElementById('applicationCategory').value = applicationCategory;
     }
     if (metadata.date_created && metadata.date_created.length > 0) {
         const rawDate = metadata.date_created[0].result.value;
@@ -304,9 +305,13 @@ function populateFieldsCodemeta(metadata) {
         document.getElementById('description').value = description;
     }
 
-    if (metadata['@type']) {
-        let type = metadata['@type'];
-        document.getElementById('applicationCategory').value = type;
+    // if (metadata['@type']) {
+    //     let type = metadata['@type'];
+    //     document.getElementById('applicationCategory').value = type;
+    // }
+    if (metadata['applicationCategory']) {
+        let applicationCategory = metadata['applicationCategory'];
+        document.getElementById('applicationCategory').value = applicationCategory;
     }
     if (metadata.name) {
         let fullTitle;
@@ -581,6 +586,7 @@ function populateAuthors(authors, reference) {
             document.querySelector(`#${personPrefix}_givenName`).value = author.givenName || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
+            document.querySelector(`#${personPrefix}_name`).value = author.name || '';
             toggleAuthorType(personPrefix);
         } else if (authorType === 'Organization') {
 

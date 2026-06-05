@@ -20,7 +20,7 @@ describe('Zero author', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
         });
     });
@@ -29,7 +29,7 @@ describe('Zero author', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
             }))
         );
@@ -44,7 +44,7 @@ describe('Zero author', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [],
             }))
@@ -90,7 +90,7 @@ describe('One full author', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -112,7 +112,7 @@ describe('One full author', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -146,7 +146,7 @@ describe('One full author', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -178,7 +178,7 @@ describe('Affiliation id', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -198,7 +198,7 @@ describe('Affiliation id', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -239,7 +239,7 @@ describe('Affiliation name', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -259,7 +259,7 @@ describe('Affiliation name', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -347,7 +347,7 @@ describe('Author order change', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -373,7 +373,7 @@ describe('Author order change', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -458,7 +458,7 @@ describe('One author with a role', function () {
         cy.get('#author_1_givenName').type('Jane');
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_0').type('Developer');
+        cy.get('#author_1_roleName_0').select('Developer');
         cy.get('#author_1_startDate_0').type('2024-03-04');
         cy.get('#author_1_endDate_0').type('2024-04-03');
 
@@ -466,7 +466,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -488,7 +488,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -514,12 +514,12 @@ describe('One author with a role', function () {
         cy.get('#author_1_givenName').type('Jane');
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_0').type('Developer');
+        cy.get('#author_1_roleName_0').select('Developer');
         cy.get('#author_1_startDate_0').type('2024-03-04');
         cy.get('#author_1_endDate_0').type('2024-04-03');
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_1').type('Maintainer');
+        cy.get('#author_1_roleName_1').select('Maintainer');
         cy.get('#author_1_startDate_1').type('2024-04-04');
         cy.get('#author_1_endDate_1').type('2024-05-05');
 
@@ -527,7 +527,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -560,13 +560,13 @@ describe('One author with a role', function () {
         cy.get('#author_1_givenName').type('Jane');
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_0').type('Developer');
+        cy.get('#author_1_roleName_0').select('Developer');
         cy.get('#author_1_startDate_0').type('2024-03-04');
         cy.get('#author_1_endDate_0').type('2024-04-03');
         cy.get('#author_1_role_remove_0').click();
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_1').type('Maintainer');
+        cy.get('#author_1_roleName_1').select('Maintainer');
         cy.get('#author_1_startDate_1').type('2024-04-04');
         cy.get('#author_1_endDate_1').type('2024-05-05');
 
@@ -574,7 +574,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -597,7 +597,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -628,7 +628,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -661,7 +661,7 @@ describe('One author with a role', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -715,12 +715,12 @@ describe('Multiple authors', function () {
         cy.get('#author_2_givenName').type('Joe');
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_0').type('Developer');
+        cy.get('#author_1_roleName_0').select('Developer');
         cy.get('#author_1_startDate_0').type('2024-03-04');
         cy.get('#author_1_endDate_0').type('2024-04-03');
 
         cy.get('#author_2_role_add').click();
-        cy.get('#author_2_roleName_0').type('Maintainer');
+        cy.get('#author_2_roleName_0').select('Maintainer');
         cy.get('#author_2_startDate_0').type('2024-04-04');
         cy.get('#author_2_endDate_0').type('2024-05-05');
 
@@ -728,7 +728,7 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -769,7 +769,7 @@ describe('Multiple authors', function () {
         cy.get('#author_2_givenName').type('Joe');
 
         cy.get('#author_1_role_add').click();
-        cy.get('#author_1_roleName_0').type('Developer');
+        cy.get('#author_1_roleName_0').select('Developer');
         cy.get('#author_1_startDate_0').type('2024-03-04');
         cy.get('#author_1_endDate_0').type('2024-04-03');
 
@@ -777,7 +777,7 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -805,7 +805,7 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                  "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -856,7 +856,7 @@ describe('Multiple authors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                  "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
                     {
@@ -902,7 +902,7 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": {
                     "@id": "_:contributor_1",
@@ -925,7 +925,7 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": [
                     {
@@ -946,7 +946,7 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": {
                     "type": "Person",
@@ -964,7 +964,7 @@ describe('Contributors', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": [
                     {
@@ -994,7 +994,7 @@ describe('One contributor with a role', function () {
         cy.get('#contributor_1_givenName').type('Jane');
 
         cy.get('#contributor_1_role_add').click();
-        cy.get('#contributor_1_roleName_0').type('Developer');
+        cy.get('#contributor_1_roleName_0').select('Developer');
         cy.get('#contributor_1_startDate_0').type('2024-03-04');
         cy.get('#contributor_1_endDate_0').type('2024-04-03');
 
@@ -1002,7 +1002,7 @@ describe('One contributor with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": [
                     {
@@ -1024,7 +1024,7 @@ describe('One contributor with a role', function () {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": [
                     {

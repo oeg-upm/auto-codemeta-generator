@@ -29,7 +29,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
         });
     });
@@ -48,7 +48,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -74,7 +74,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "license": ["https://spdx.org/licenses/AGPL-3.0", "https://spdx.org/licenses/MIT"],
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -97,7 +97,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -118,7 +118,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contIntegration": "https://test-ci.org/my-software",
                 "codemeta:continuousIntegration": {
@@ -140,7 +140,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "continuousIntegration": "https://test-ci.org/my-software",
                 "codemeta:contIntegration": {
@@ -162,7 +162,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
             }))
         );
@@ -175,7 +175,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -198,7 +198,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "license": ["https://spdx.org/licenses/AGPL-3.0", "https://spdx.org/licenses/MIT"],
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -257,7 +257,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": ["https://doi.org/10.5063/schema/codemeta-2.0"],
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
             }))
         );
@@ -270,7 +270,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "continuousIntegration": "https://test-ci.org/my-software",
                 "isSourceCodeOf": "Bigger Application"
@@ -294,7 +294,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "codemeta:contIntegration": {
                     "id": "https://test-ci.org/my-software"
@@ -310,7 +310,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "codemeta:continuousIntegration": {
                     "id": "https://test-ci.org/my-software"
@@ -338,7 +338,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contIntegration": "https://test-ci1.org/my-software",
                 "codemeta:continuousIntegration": {
@@ -353,7 +353,7 @@ describe('JSON Import', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "continuousIntegration": "https://test-ci1.org/my-software",
                 "codemeta:contIntegration": {

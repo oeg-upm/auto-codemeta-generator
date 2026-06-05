@@ -17,6 +17,9 @@ const personFields = [
     'affiliation',
 ];
 
+let lastCodemetaVersion = "3.0";
+let skipAutoGenerate = false;
+
 function createPersonFieldset(personPrefix, legend) {
     // Creates a fieldset containing inputs for informations about a person
     var fieldset = document.createElement("fieldset")
@@ -224,7 +227,7 @@ function movePerson(prefix, id1, direction) {
     toggleAuthorType(`${prefix}_${id2}`);
 
     // Form was changed; regenerate
-    generateCodemeta();
+    generateCodemeta(lastCodemetaVersion);
 }
 
 function addPerson(prefix, legend) {
@@ -280,7 +283,7 @@ function removeKeyword(keywordId, deleteStorage) {
     setNbKeywords(keywordId - 1);
 
     if (deleteStorage)
-        generateCodemeta();
+        generateCodemeta(lastCodemetaVersion);
 }
 
 function removePerson(prefix, deleteStorage) {
@@ -306,7 +309,7 @@ function removePerson(prefix, deleteStorage) {
         // }
     }
     if (deleteStorage)
-        generateCodemeta();
+        generateCodemeta(lastCodemetaVersion);
 }
 
 // Initialize a group of persons (authors, contributors) on page load.
@@ -374,6 +377,8 @@ function addRole(personPrefix) {
                 <option value="Visualization">Visualization</option>
                 <option value="Writing – original draft">Writing – original draft</option>
                 <option value="Writing – review & editing">Writing – review & editing</option>
+                <option value="Developer">Developer</option>
+                <option value="Maintainer">Maintainer</option>
             </select>
                 </li>
         <li><input type="button" id="${personPrefix}_role_remove_${roleIndex}" value="X" title="Remove role" /></li>
@@ -399,6 +404,8 @@ function addRole(personPrefix) {
                 <option value="Visualization">Visualization</option>
                 <option value="Writing – original draft">Writing – original draft</option>
                 <option value="Writing – review & editing">Writing – review & editing</option>
+                <option value="Developer">Developer</option>
+                <option value="Maintainer">Maintainer</option>
             </select>
 
         <li><label for="${personPrefix}_startDate_${roleIndex}">Start date:</label>
@@ -467,11 +474,19 @@ function initCallbacks() {
 
     document.querySelector('#generateCodemetaV2').disabled = false;
     document.querySelector('#generateCodemetaV2')
-        .addEventListener('click', () => generateCodemeta("2.0"));
+    .addEventListener('click', () => {
+        lastCodemetaVersion = "2.0";
+        generateCodemeta("2.0");
+    });
 
     document.querySelector('#generateCodemetaV3').disabled = false;
+    // document.querySelector('#generateCodemetaV3')
+    //     .addEventListener('click', () => generateCodemeta("3.0"));
     document.querySelector('#generateCodemetaV3')
-        .addEventListener('click', () => generateCodemeta("3.0"));
+    .addEventListener('click', () => {
+        lastCodemetaVersion = "3.0";
+        generateCodemeta("3.0");
+    });
 
     document.querySelector('#resetForm')
         .addEventListener('click', resetForm);
@@ -489,7 +504,9 @@ function initCallbacks() {
         .addEventListener('click', downloadCodemeta);
 
     document.querySelector('#inputForm')
-        .addEventListener('change', () => generateCodemeta());
+        .addEventListener('change', () => {
+            if (!skipAutoGenerate) generateCodemeta(lastCodemetaVersion);
+        });
 
     document.querySelector('#developmentStatus')
         .addEventListener('change', fieldToLower);
@@ -512,7 +529,8 @@ function toggleAuthorType(prefix) {
     if (givenNameField) givenNameField.style.display = isPerson ? "block" : "none";
     if (familyNameField) familyNameField.style.display = isPerson ? "block" : "none";
     if (affiliationField) affiliationField.style.display = isPerson ? "block" : "none";
-    if (nameField) nameField.style.display = isPerson ? "none" : "block";
+    // if (nameField) nameField.style.display = isPerson ? "none" : "block";
+    if (nameField) nameField.style.display = "block";
 
     const givenNameInput = document.getElementById(`${prefix}_givenName`);
     if (!isPerson && givenNameInput) givenNameInput.value = "";
@@ -523,8 +541,8 @@ function toggleAuthorType(prefix) {
     const affiliationInput = document.getElementById(`${prefix}_affiliation`);
     if (!isPerson && affiliationInput) affiliationInput.value = "";
 
-    const nameInput = document.getElementById(`${prefix}_name`);
-    if (isPerson && nameInput) nameInput.value = "";
+    // const nameInput = document.getElementById(`${prefix}_name`);
+    // if (isPerson && nameInput) nameInput.value = "";
 
 }
 
@@ -536,19 +554,19 @@ function addRowRequirements(name = "", version = "") {
                        `<td><input type="text" name="version" value="${version}"></td>` +
                        `<td><button onclick="deleteRowRequirements(this)">-</button></td>`; 
                        
-    generateCodemeta();
+    generateCodemeta(lastCodemetaVersion);
 
 }
 
 function deleteRowRequirements(button) {
     let row = button.parentNode.parentNode;
     row.parentNode.removeChild(row);
-    generateCodemeta();
+    generateCodemeta(lastCodemetaVersion);
 }
 
 function RemoveRequirements() {
     let tableBody = document.querySelector("#softwareRequirements tbody");
     tableBody.innerHTML = "";
 
-    generateCodemeta(); 
+    generateCodemeta(lastCodemetaVersion); 
 }

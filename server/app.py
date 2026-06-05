@@ -22,17 +22,19 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
 with open("../js/config.json") as f:
     config = json.load(f)
 
 repo_url = config["project_repository"]
 
-# @app.options("/metadata")
 # async def options_metadata():
 #     return JSONResponse(status_code=200)
 @app.get("/version")
 async def get_version():
     version = somef.__version__
+    
+# @app.options("/metadata")
     return {"somef_version": version}
 
 @app.get("/latest_release")
