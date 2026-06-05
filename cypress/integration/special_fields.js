@@ -22,7 +22,7 @@ describe('Funder id', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "funder": {
                     "@type": "Organization",
@@ -35,7 +35,7 @@ describe('Funder id', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "funder": {
                     "@type": "Organization",
@@ -61,7 +61,7 @@ describe('Funder name', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "funder": {
                     "@type": "Organization",
@@ -74,7 +74,7 @@ describe('Funder name', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "funder": {
                     "@type": "Organization",

@@ -21,6 +21,9 @@ function getDocumentId(doc) {
 
 function isCompactTypeEqual(type, compactedType) {
     // FIXME: are all variants allowed?
+    if (Array.isArray(type)) {
+        return type.some(t => isCompactTypeEqual(t, compactedType));
+    }
     return (type == `${compactedType}`
         || type == `schema:${compactedType}`
         || type == `codemeta:${compactedType}`
