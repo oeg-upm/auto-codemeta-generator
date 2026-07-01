@@ -143,7 +143,7 @@ function migrateRemoteRepository() {
     })
     .then(metadata => {
         spinner.style.display = 'none';
-        // console.log('METADATA RECEIVED:', JSON.stringify(metadata, null, 2));
+        console.log('METADATA RECEIVED:', JSON.stringify(metadata, null, 2));
         populateFieldsCodemeta(metadata);
 
         setTimeout(() => {
