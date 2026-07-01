@@ -316,11 +316,11 @@ function populateFieldsCodemeta(metadata) {
     if (metadata.name) {
         let fullTitle;
         if (Array.isArray(metadata.name)) {
-            name = metadata.name.map(ft => ft.result.value).join(', ');
+            fullTitle = metadata.name.map(ft => ft.result.value).join(', ');
         } else {
-            name = metadata.name; 
+            fullTitle = metadata.name; 
         }
-        document.getElementById('name').value = name;
+        document.getElementById('name').value = fullTitle;
     }
 
     if (metadata.identifier) {
@@ -402,7 +402,7 @@ function populateFieldsCodemeta(metadata) {
     }
 
    if (metadata.referencePublication && metadata.referencePublication.length > 0) {
-
+        // console.log('DEBUG referencePublication:', JSON.stringify(metadata.referencePublication, null, 2));
         // TODO: For now, we only take the first reference we find, but in the future we need to find out a way to display all the references because it’s an array.
         const firstPublication = metadata.referencePublication[0]; 
 
@@ -598,7 +598,6 @@ function populateAuthors(authors, reference) {
             document.querySelector(`#${personPrefix}_name`).value = name || '';
             toggleAuthorType(personPrefix);
         } else if (authorType === 'Organization') {
-
             document.querySelector(`#${personPrefix}_name`).value = author.name || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
