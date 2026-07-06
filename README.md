@@ -1,6 +1,6 @@
 # Auto-CodeMeta Generator
 
-This repository is an extension of the Codemeta Generator to fill in the form automatically from a given GitHub or GitLab repository.
+This repository is an extension of the Codemeta Generator to fill in the form automatically from a given repository (GitHub, GitLab, Codeberg or Bitbucket).
 
 This repository contains a (client-side) web application to generate
 CodeMeta documents (aka. `codemeta.json`).
