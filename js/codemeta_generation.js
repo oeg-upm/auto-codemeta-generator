@@ -103,7 +103,6 @@ const directCodemetaFields = [
     'issueTracker',
     'name',
     'version',
-    'identifier',
     'description',
     'applicationCategory',
     'releaseNotes',
@@ -123,6 +122,7 @@ const splittedCodemetaFields = [
     // ['softwareRequirements', '\n'],
     // ['softwareRequirements', ','],
     ['relatedLink', '\n'],
+    ['identifier', ',']
 ]
 
 // Names of codemeta properties with a matching HTML field name,
