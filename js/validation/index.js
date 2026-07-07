@@ -400,8 +400,17 @@ function populateFieldsCodemeta(metadata) {
     if (metadata.releaseNotes) {
         document.getElementById('releaseNotes').value = metadata.releaseNotes;
     }
+    if (metadata.runtimePlatform) {
+        let runtimePlatform;
+        if (Array.isArray(metadata.runtimePlatform)) {
+            runtimePlatform = metadata.runtimePlatform.join(', ');
+        } else {
+            runtimePlatform = metadata.runtimePlatform;
+        }
+        document.getElementById('runtimePlatform').value = runtimePlatform;
+    }
 
-   if (metadata.referencePublication && metadata.referencePublication.length > 0) {
+    if (metadata.referencePublication && metadata.referencePublication.length > 0) {
         // console.log('DEBUG referencePublication:', JSON.stringify(metadata.referencePublication, null, 2));
         // TODO: For now, we only take the first reference we find, but in the future we need to find out a way to display all the references because it’s an array.
         const firstPublication = metadata.referencePublication[0]; 
@@ -594,12 +603,14 @@ function populateAuthors(authors, reference) {
             document.querySelector(`#${personPrefix}_familyName`).value = familyName || '';
             document.querySelector(`#${personPrefix}_givenName`).value = givenName || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
+            document.querySelector(`#${personPrefix}_identifier`).value = author.identifier || author['identifier'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
             document.querySelector(`#${personPrefix}_name`).value = name || '';
             toggleAuthorType(personPrefix);
         } else if (authorType === 'Organization') {
             document.querySelector(`#${personPrefix}_name`).value = author.name || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
+            document.querySelector(`#${personPrefix}_identifier`).value = author.identifier || author['identifier'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
             toggleAuthorType(personPrefix);
         }
