@@ -133,6 +133,7 @@ const directPersonCodemetaFields = [
     'name',
     'email',
     'affiliation',
+    'identifier'
 ];
 
 const directOrganizationCodemetaFields = [

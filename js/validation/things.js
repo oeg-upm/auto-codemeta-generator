@@ -356,7 +356,8 @@ var personFieldValidators = {
     "familyName": validateText,
     "email": validateText,
     "affiliation": validateOrganizations,
-    "identifier": validateUrls,
+    // "identifier": validateUrls,
+    "identifier": noValidation,
     "name": validateText,  // TODO: this is technically valid, but should be allowed here?
     "url": validateUrls,
 };
@@ -369,7 +370,7 @@ var organizationFieldValidators = {
     "id": validateUrlOrBlankNode,
     
     "email": validateText,
-    "identifier": validateUrls,
+    "identifier": noValidation,
     "name": validateText,
     "address": validateText,
     "sponsor": validateActors,

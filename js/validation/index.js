@@ -603,12 +603,14 @@ function populateAuthors(authors, reference) {
             document.querySelector(`#${personPrefix}_familyName`).value = familyName || '';
             document.querySelector(`#${personPrefix}_givenName`).value = givenName || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
+            document.querySelector(`#${personPrefix}_identifier`).value = author.identifier || author['identifier'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
             document.querySelector(`#${personPrefix}_name`).value = name || '';
             toggleAuthorType(personPrefix);
         } else if (authorType === 'Organization') {
             document.querySelector(`#${personPrefix}_name`).value = author.name || '';
             document.querySelector(`#${personPrefix}_id`).value = author['@id'] || '';
+            document.querySelector(`#${personPrefix}_identifier`).value = author.identifier || author['identifier'] || '';
             document.querySelector(`#${personPrefix}_email`).value = author.email || '';
             toggleAuthorType(personPrefix);
         }

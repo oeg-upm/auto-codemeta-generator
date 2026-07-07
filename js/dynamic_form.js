@@ -15,6 +15,7 @@ const personFields = [
     'email',
     'id',
     'affiliation',
+    'identifier'
 ];
 
 let lastCodemetaVersion = "3.0";
@@ -86,6 +87,7 @@ function createPersonFieldset(personPrefix, legend) {
             <input type="url" id="${personPrefix}_id" name="${personPrefix}_id"
                     placeholder="http://orcid.org/0000-0002-1825-0097" />
         </p>
+        <input type="hidden" id="${personPrefix}_identifier" name="${personPrefix}_identifier" />
         <p>
             <label for="${personPrefix}_affiliation">Affiliation</label>
             <input type="text" id="${personPrefix}_affiliation" name="${personPrefix}_affiliation"
