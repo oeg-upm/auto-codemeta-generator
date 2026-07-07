@@ -103,7 +103,6 @@ const directCodemetaFields = [
     'issueTracker',
     'name',
     'version',
-    'identifier',
     'description',
     'applicationCategory',
     'releaseNotes',
@@ -123,6 +122,7 @@ const splittedCodemetaFields = [
     // ['softwareRequirements', '\n'],
     // ['softwareRequirements', ','],
     ['relatedLink', '\n'],
+    ['identifier', ',']
 ]
 
 // Names of codemeta properties with a matching HTML field name,
@@ -133,6 +133,7 @@ const directPersonCodemetaFields = [
     'name',
     'email',
     'affiliation',
+    'identifier'
 ];
 
 const directOrganizationCodemetaFields = [
@@ -160,7 +161,7 @@ const directReviewCodemetaFields = [
 ];
 
 const crossCodemetaFields = {
-    "contIntegration": ["contIntegration", "continuousIntegration"],
+    "contIntegration": ["continuousIntegration"],
     // "embargoDate": ["embargoDate", "embargoEndDate"], Not present in the form yet TODO ?
 };
 
@@ -475,7 +476,23 @@ async function generateCodemeta(codemetaVersion = "3.0") {
 
         transformIdAndType(compacted);
         compacted["@type"] = ["SoftwareSourceCode", "SoftwareApplication"];
-        codemetaText = JSON.stringify(compacted, null, 4);
+
+        if (codemetaVersion === "3.0") {
+            delete compacted['codemeta:contIntegration'];
+        } else if (codemetaVersion === "2.0") {
+            delete compacted['codemeta:continuousIntegration'];
+        }
+
+        const ordered = {};
+        ordered["@context"] = compacted["@context"];
+        ordered["@type"] = compacted["@type"];
+        for (const key of Object.keys(compacted)) {
+            if (key !== "@context" && key !== "@type") {
+                ordered[key] = compacted[key];
+            }
+        }
+        codemetaText = JSON.stringify(ordered, null, 4);
+        // codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
     else {
@@ -708,13 +725,14 @@ async function importCodemeta() {
         }
     });
 
-    for (const [key, items] of Object.entries(crossCodemetaFields)) {
-        let value = "";
-        items.forEach(item => {
-           value = doc[item] || value;
-        });
-        setIfDefined(`#${key}`, value);
-    }
+    // for (const [key, items] of Object.entries(crossCodemetaFields)) {
+    //     let value = "";
+    //     items.forEach(item => {
+    //        value = doc[item] || value;
+    //     });
+    //     setIfDefined(`#${key}`, value);
+    // }
+    setIfDefined('#contIntegration', doc['continuousIntegration'] || doc['contIntegration']);
 
     importPersons('author', 'Author', doc['author']);
   
