@@ -17,7 +17,7 @@ let CONFIG = {};
 
 let currentAuthorRefIndex = 0;
 
-fetch('./js/config.json')
+fetch('./js/config_local.json')
     .then(response => response.json())
     .then(data => {
         CONFIG = data;
@@ -400,8 +400,17 @@ function populateFieldsCodemeta(metadata) {
     if (metadata.releaseNotes) {
         document.getElementById('releaseNotes').value = metadata.releaseNotes;
     }
+    if (metadata.runtimePlatform) {
+        let runtimePlatform;
+        if (Array.isArray(metadata.runtimePlatform)) {
+            runtimePlatform = metadata.runtimePlatform.join(', ');
+        } else {
+            runtimePlatform = metadata.runtimePlatform;
+        }
+        document.getElementById('runtimePlatform').value = runtimePlatform;
+    }
 
-   if (metadata.referencePublication && metadata.referencePublication.length > 0) {
+    if (metadata.referencePublication && metadata.referencePublication.length > 0) {
         // console.log('DEBUG referencePublication:', JSON.stringify(metadata.referencePublication, null, 2));
         // TODO: For now, we only take the first reference we find, but in the future we need to find out a way to display all the references because it’s an array.
         const firstPublication = metadata.referencePublication[0]; 
