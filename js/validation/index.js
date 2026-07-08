@@ -143,6 +143,12 @@ function migrateRemoteRepository() {
     })
     .then(metadata => {
         spinner.style.display = 'none';
+        if (metadata.error) {
+            setError('Server error: ' + metadata.error);
+            // console.error('Metadata error:', metadata.error);
+            document.querySelector('#codemetaText').innerText = '';
+            return; 
+        }
         // console.log('METADATA RECEIVED:', JSON.stringify(metadata, null, 2));
         populateFieldsCodemeta(metadata);
 
