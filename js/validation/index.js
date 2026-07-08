@@ -17,7 +17,7 @@ let CONFIG = {};
 
 let currentAuthorRefIndex = 0;
 
-fetch('./js/config_local.json')
+fetch('./js/config.json')
     .then(response => response.json())
     .then(data => {
         CONFIG = data;
