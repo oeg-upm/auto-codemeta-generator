@@ -166,3 +166,11 @@ input:invalid {
     cursor: pointer;
 }
 
+#maintainer_container {
+    margin-bottom: 20px;
+}
+
+fieldset.maintainer {
+    display: inline-block;
+    vertical-align: top;
+}

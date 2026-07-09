@@ -301,6 +301,17 @@ function populateFieldsCodemeta(metadata) {
         populateKeywords(metadata.keywords)
     }
 
+    if (metadata.maintainer && metadata.maintainer.length > 0) {
+        metadata.maintainer.forEach(m => {
+            const id = addMaintainer();
+            const prefix = `maintainer_${id}`;
+            const r = m.result || m;
+            document.querySelector(`#${prefix}_name`).value = r.name || '';
+            document.querySelector(`#${prefix}_identifier`).value = r.username || r.identifier || '';
+            document.querySelector(`#${prefix}_email`).value = r.email || '';
+        });
+    }
+
     if (metadata.description) {
         let description;
         if (Array.isArray(metadata.description)) {
