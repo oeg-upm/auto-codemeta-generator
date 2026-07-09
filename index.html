@@ -427,6 +427,17 @@ Bugfixes: that and this." ></textarea>
                         onclick="removePerson('contributor', true);" />
                 </div>
             </fieldset>
+
+            <fieldset class="maintainers" id="maintainer_container">
+                <legend>Maintainers</legend>
+                <input type="hidden" id="maintainer_nb" value="0" />
+                <div id="addRemoveMaintainers">
+                    <input type="button" id="maintainer_add" value="Add one"
+                        onclick="addMaintainer()" />
+                    <input type="button" id="maintainer_remove" value="Remove last"
+                        onclick="removeMaintainer(true)" />
+                </div>
+            </fieldset>
         </div>
 
     </form>

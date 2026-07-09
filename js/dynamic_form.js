@@ -437,6 +437,7 @@ function resetForm() {
     removePersons('contributor', false);
     removePersons('author_reference', false);
     removeKeywords(false);
+    removeMaintainers(false);
     RemoveRequirements()
     // Reset the list of selected licenses
     document.getElementById("selected-licenses").innerHTML = '';
@@ -516,6 +517,7 @@ function initCallbacks() {
     initPersons('author', 'Author');
     initPersons('contributor', 'Contributor');
     initKeywords();
+    initMaintainers();
 }
 
 function toggleAuthorType(prefix) {
@@ -572,4 +574,68 @@ function RemoveRequirements() {
     tableBody.innerHTML = "";
 
     generateCodemeta(lastCodemetaVersion); 
+}
+
+function createMaintainerFieldset(prefix, legend) {
+    var fieldset = document.createElement("fieldset")
+    fieldset.classList.add("maintainer");
+    fieldset.classList.add("leafFieldset");
+    fieldset.id = prefix;
+    fieldset.innerHTML = `
+        <legend>${legend}</legend>
+        <p>
+            <label for="${prefix}_name">Name</label>
+            <input type="text" id="${prefix}_name" name="${prefix}_name"
+                placeholder="Maintainer name" />
+        </p>
+        <p>
+            <label for="${prefix}_identifier">Identifier</label>
+            <input type="text" id="${prefix}_identifier" name="${prefix}_identifier"
+                placeholder="GitHub username or ORCID" />
+        </p>
+        <p>
+            <label for="${prefix}_email">E-mail address</label>
+            <input type="email" id="${prefix}_email" name="${prefix}_email"
+                placeholder="maintainer@example.org" />
+        </p>
+    `;
+    return fieldset;
+}
+
+function addMaintainerWithId(container, id) {
+    var prefix = `maintainer_${id}`;
+    var fieldset = createMaintainerFieldset(prefix, `Maintainer #${id}`);
+    container.appendChild(fieldset);
+}
+
+function addMaintainer() {
+    var container = document.querySelector('#maintainer_container');
+    var id = getNbMaintainers() + 1;
+    addMaintainerWithId(container, id);
+    setNbMaintainers(id);
+    generateCodemeta(lastCodemetaVersion); 
+    return id;
+}
+
+function removeMaintainer(deleteStorage) {
+    var id = getNbMaintainers();
+    document.querySelector(`#maintainer_${id}`).remove();
+    setNbMaintainers(id - 1);
+    if (deleteStorage)
+        generateCodemeta(lastCodemetaVersion);
+}
+
+function initMaintainers() {
+    var nb = getNbMaintainers();
+    var container = document.querySelector('#maintainer_container');
+    for (let id = 1; id <= nb; id++) {
+        addMaintainerWithId(container, id);
+    }
+}
+
+function removeMaintainers(deleteStorage) {
+    var nb = getNbMaintainers();
+    for (let id = 1; id <= nb; id++) {
+        removeMaintainer(deleteStorage);
+    }
 }

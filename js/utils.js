@@ -30,6 +30,15 @@ function setError(msg) {
     document.querySelector("#errorMessage").innerHTML = msg;
 }
 
+function getNbMaintainers() {
+    var nbField = document.querySelector('#maintainer_nb');
+    return parseInt(nbField.value, 10);
+}
+function setNbMaintainers(nb) {
+    var nbField = document.querySelector('#maintainer_nb');
+    nbField.value = nb;
+}
+
 function trimSpaces(s) {
     return s.replace(/^\s+|\s+$/g, '');
 }

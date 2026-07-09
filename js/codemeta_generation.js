@@ -429,7 +429,11 @@ async function buildExpandedDocWithAllContexts() {
     var keywords = generateKeywords();
     if (keywords.length > 0) {
         doc["keywords"] = keywords;
-    }   
+    }
+    var maintainers = generateMaintainers();
+    if (maintainers.length > 0) {
+        doc["maintainer"] = maintainers;
+    }
     var softwareRequirements = generateSoftwareRequirements();
     if (softwareRequirements.length > 0) {
         doc["softwareRequirements"] = [...softwareRequirements];
@@ -744,6 +748,10 @@ async function importCodemeta() {
         }
         importKeywords(doc['keywords']);
     }
+    if (doc['maintainer']) {
+        const maintainers = Array.isArray(doc['maintainer']) ? doc['maintainer'] : [doc['maintainer']];
+        importMaintainers(maintainers);
+    }
     if (doc['contributor']) {
         // If only one contributor, it is compacted to an object
         const contributors = Array.isArray(doc['contributor'])? doc['contributor'] : [doc['contributor']];
@@ -801,5 +809,38 @@ function downloadCodemeta() {
     URL.revokeObjectURL(url);
 }
 
+function generateMaintainer(idPrefix) {
+    const name = getIfSet(`#${idPrefix}_name`);
+    const identifier = getIfSet(`#${idPrefix}_identifier`);
+    const email = getIfSet(`#${idPrefix}_email`);
 
+    if (!name && !identifier && !email) return undefined;
 
+    var doc = { "@type": "Person" };
+    if (name) doc["name"] = name;
+    if (identifier) doc["identifier"] = identifier;
+    if (email) doc["email"] = email;
+    return doc;
+}
+
+function generateMaintainers() {
+    var maintainers = [];
+    var nb = getNbMaintainers();
+    for (let id = 1; id <= nb; id++) {
+        const m = generateMaintainer(`maintainer_${id}`);
+        if (m !== undefined) maintainers.push(m);
+    }
+    return maintainers;
+}
+
+function importMaintainers(maintainers) {
+    if (maintainers === undefined) return;
+    maintainers.forEach((m) => {
+        const id = addMaintainer();
+        const prefix = `maintainer_${id}`;
+        const person = m['@type'] === 'Person' ? m : m;  // both cases same handler
+        document.querySelector(`#${prefix}_name`).value = person.name || '';
+        document.querySelector(`#${prefix}_identifier`).value = person.identifier || '';
+        document.querySelector(`#${prefix}_email`).value = person.email || '';
+    });
+}
