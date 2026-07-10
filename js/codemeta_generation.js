@@ -330,15 +330,13 @@ function generateSoftwareRequirement(row) {
         return undefined;
     }
 
-    if (name && version) {
-        return {
-            "name": name,
-            "version": version
-        };
-    }
+    const doc = { "@type": "SoftwareApplication" };
+    if (name) doc["name"] = name;
+    if (version) doc["version"] = version;
 
-    return name || version;
+    return doc;
 }
+
 function generateReferencePublications() {
 
     var publications = [];
@@ -447,6 +445,24 @@ async function buildExpandedDocWithAllContexts() {
     return await jsonld.expand(doc);
 }
 
+
+function transformIdAndType(obj) {
+    if (obj && typeof obj === 'object') {
+        if (obj.id) {
+            obj["@id"] = obj.id;
+            delete obj.id;
+        }
+        if (obj.type) {
+            obj["@type"] = obj.type;
+            delete obj.type;
+        }
+        for (const key in obj) {
+            transformIdAndType(obj[key]);
+        }
+    } else if (Array.isArray(obj)) {
+        obj.forEach(transformIdAndType); 
+    }
+}
 // change to v3.0 as default
 async function generateCodemeta(codemetaVersion = "3.0") {
      if (skipAutoGenerate) return;
@@ -459,24 +475,6 @@ async function generateCodemeta(codemetaVersion = "3.0") {
         const expanded = await buildExpandedDocWithAllContexts();
 
         const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
-
-        function transformIdAndType(obj) {
-            if (obj && typeof obj === 'object') {
-                if (obj.id) {
-                    obj["@id"] = obj.id;
-                    delete obj.id;
-                }
-                if (obj.type) {
-                    obj["@type"] = obj.type;
-                    delete obj.type;
-                }
-                for (const key in obj) {
-                    transformIdAndType(obj[key]);
-                }
-            } else if (Array.isArray(obj)) {
-                obj.forEach(transformIdAndType); 
-            }
-        }
 
         transformIdAndType(compacted);
         compacted["@type"] = ["SoftwareSourceCode", "SoftwareApplication"];
@@ -526,6 +524,71 @@ async function generateCodemeta(codemetaVersion = "3.0") {
         // For restoring the form state on page reload
         sessionStorage.setItem('codemetaText', codemetaText);
     }
+}
+
+// Generates a schema.org JSON-LD snippet from the information provided in the form.
+async function generateSchemaOrg() {
+
+    //same code as -gc flag (google complaint) in somef.
+    if (skipAutoGenerate) return;
+
+    // get codemeta 3
+    await generateCodemeta("3.0");
+    const text = document.querySelector('#codemetaText').innerText;
+    if (!text) return;
+
+    const doc = JSON.parse(text);
+
+    // change context
+    doc["@context"] = {
+        "@vocab": "https://schema.org/",
+        "codemeta": "https://w3id.org/codemeta/3.0/"
+    };
+
+
+    //list
+    for (const prop of ["author", "contributor", "editor"]) {
+        if (Array.isArray(doc[prop])) {
+            doc[prop] = {"@list": doc[prop]};
+        }
+    }
+    if (doc["referencePublication"]) {
+        doc["referencePublication"].forEach(pub => {
+            if (Array.isArray(pub.author)) {
+                pub.author = {"@list": pub.author};
+            }
+        });
+    }
+
+    // no schema.org equivalent for these properties, so we prefix them with codemeta
+    const SCHEMA_ORG = new Set([
+        "@type", "name", "description", "author", "keywords",
+        "license", "url", "identifier", "programmingLanguage",
+        "releaseNotes", "releaseDate"
+    ]);
+    for (const key of Object.keys(doc)) {
+        if (!SCHEMA_ORG.has(key) && key !== "@context") {
+            doc[`codemeta:${key}`] = doc[key];
+            delete doc[key];
+        }
+    }
+
+    if (typeof doc["keywords"] === "string") {
+        doc["keywords"] = doc["keywords"].split(",").map(s => s.trim()).filter(Boolean);
+    }
+
+    if (Array.isArray(doc["codemeta:softwareRequirements"])) {
+        doc["codemeta:softwareRequirements"] = doc["codemeta:softwareRequirements"]
+            .filter(r => typeof r === "object" && r !== null);
+    }
+
+    if (typeof doc["codemeta:developmentStatus"] === "string") {
+        doc["codemeta:developmentStatus"] = doc["codemeta:developmentStatus"]
+            .charAt(0).toUpperCase() + doc["codemeta:developmentStatus"].slice(1);
+    }
+
+    document.querySelector('#codemetaText').innerText = JSON.stringify(doc, null, 4);
+    setError("");
 }
 
 // Imports a single field (name or @id) from an Organization.

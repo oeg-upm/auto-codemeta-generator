@@ -491,6 +491,10 @@ function initCallbacks() {
         generateCodemeta("3.0");
     });
 
+    document.querySelector('#generateSchemaOrg').disabled = false;
+    document.querySelector('#generateSchemaOrg')
+    .addEventListener('click', () => generateSchemaOrg());
+
     document.querySelector('#resetForm')
         .addEventListener('click', resetForm);
 
