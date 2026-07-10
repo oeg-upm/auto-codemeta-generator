@@ -466,8 +466,10 @@ function populateFieldsCodemeta(metadata) {
             let version = "";
     
             if (typeof req === "string") {
-                name = req; 
+                if (req.startsWith('--')) return; 
+                    name = req;
             } else {
+                if (!req.name || req.name.startsWith('--')) return; 
                 name = req.name ? req.name : "";
                 version = req.version ? req.version : "";
             }
