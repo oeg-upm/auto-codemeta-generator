@@ -121,9 +121,6 @@ describe('JSON Generation', function() {
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contIntegration": "https://test-ci.org/my-software",
-                "codemeta:continuousIntegration": {
-                    "@id": "https://test-ci.org/my-software"
-                },
                 "codemeta:isSourceCodeOf": {
                     "@id": "Bigger Application"
                 }
@@ -143,9 +140,6 @@ describe('JSON Generation', function() {
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "continuousIntegration": "https://test-ci.org/my-software",
-                "codemeta:contIntegration": {
-                    "@id": "https://test-ci.org/my-software"
-                },
                 "isSourceCodeOf": "Bigger Application"
                 // ,
                 // "review": {
