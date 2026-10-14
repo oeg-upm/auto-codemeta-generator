@@ -1,24 +1,8 @@
-/**
+/*!
  * Based on:
- * Bootstrap v3.3.7 (http://getbootstrap.com)
- * Copyright 2011-2016 Twitter, Inc.
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Bootstrap  v5.3.8 (https://getbootstrap.com/)
+ * Copyright 2011-2025 The Bootstrap Authors
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 
 /**
@@ -30,11 +14,50 @@
 
 /* This file contains extra CSS, that isn't needed for the application to be
  * usable, but it makes it more welcoming, and reuses a style similar to
- * Codemeta's main website.
+ * CodeMeta's main website.
  */
+
+:root {
+    color-scheme: light dark;
+}
+
+/*!
+ *  Make the header colour change on-scroll smoother
+ */
+
+#sectionsNav {
+    transition: all 0.25s;
+}
+
+/*!
+ * overide black border on responsive nav toggler
+ */
+
+.navbar {
+    --bs-navbar-toggler-focus-width: none;
+}
+
+/*!
+ * Dark mode toggler button
+ */
+
+li.dark-light-toggler {
+    height: 50px;
+}
+
+.dark-light-toggler .form-check-label {
+    padding: 0px;
+    margin-top: 10px;
+    margin-left: 25px;
+    font-size: 1.25em;
+}
+
 
 body {
     margin: 0;
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+
 }
 
 header {
@@ -67,19 +90,53 @@ main {
     /* Same properties as .main on https://codemeta.github.io/ */
     border-radius: 6px;
     box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
-    background: white;
+    background: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+}
+
+.navbar {
+    background-color: var(--bs-body-bg) !important;
+    color: rgba(var(--bs-emphasis-color-rgb), 0.8) !important;
+}
+
+.field-description {
+    color: var(--bs-secondary-text-emphasis);
+}
+
+label {
+    color: var(--bs-body-color);
+}
+
+legend {
+    width: auto;
+    float: none;
+    padding: 0px 5px;
+}
+
+fieldset {
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid var(--bs-secondary-text-emphasis);
+}
+
+pre, input, textarea {
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-secondary-text-emphasis) !important;
+    border-radius: 4px;
+    color: var(--bs-body-color);
+    padding: 5px;
 }
 
 @media screen and (min-width: 600px) {
     header {
         /* Height+padding = half of the header height on https://codemeta.github.io/ */
-        min-height: 170px; 
-        padding-top: 20px;
+        min-height: 200px;
+        padding-top: 60px;
     }
 
     main {
         padding: 10px;
-
+        
         /* Half of margins of .main on https://codemeta.github.io/ */
         margin: -30px 15px 0px;
     }
@@ -96,29 +153,159 @@ main {
 
     main {
         padding: 5px;
-
         margin: -30px 7px 0px;
     }
 }
 
+/*!
+ * Accessibility tweaks
+ */
+
+:focus-visible, .dark-light-toggler:focus-within {
+  outline: 2px dashed var(--bs-info) !important;
+  border-radius: 2px;
+}
+
+.main a {
+  color: var(--bs-primary);
+}
+
+.main a, #sectionsNav a:hover, #footer-nav a:hover {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+[data-bs-theme=dark] .main a {
+  color: var(--bs-primary-text-emphasis);
+}
+
+.main a:hover {
+  text-decoration: none !important;
+}
+
+code{
+  color: var(--bs-code-color);
+}
+
+#skip-to-content{
+  color: var(--bs-body-color);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding-right: 5px;
+  transform: translateY(-100%);
+  background: var(--bs-secondary-bg-subtle);
+  border-radius: 0 0 0 1em;
+}
+
+@media only screen and (min-width: 992px) {
+
+	#skip-to-content:focus{
+		transform: translateY(0%);
+	}
+
+}
+
+@media only screen and (max-width: 991px) {
+
+    .navbar-translate {
+        width: auto !important;
+    }
+
+    #skip-to-content {
+      top: -51px;
+      right: -235px;
+    }
+
+	#skip-to-content{
+		transform: translateY(-177%);
+		padding-right: 0px;
+	}
+
+	#skip-to-content:focus{
+		top: 20px;
+        right: -100px;
+	}
+
+}
+
+/*!
+ * Spinner shown while the auto-generator fetches repository information
+ * (auto-codemeta-generator addition)
+ */
 
 .spinner {
-    border: 16px solid #f3f3f3; 
-    border-top: 16px solid #3498db; 
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
     border-radius: 50%;
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
-    display: none; 
-    position: fixed; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    z-index: 1000; 
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
 }
 
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+
+/*!
+ * Button styling (auto-codemeta-generator addition)
+ */
+
+input[type=button], button {
+    background-color: transparent;
+    border: 1px solid var(--bs-primary) !important;
+    border-radius: 6px;
+    color: var(--bs-primary);
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 4px 10px;
+}
+
+[data-bs-theme=dark] input[type=button],
+[data-bs-theme=dark] button {
+    border-color: var(--bs-primary-text-emphasis) !important;
+    color: var(--bs-primary-text-emphasis);
+}
+
+input[type=button]:disabled,
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Main action */
+#downloadRepo {
+    background-color: rgba(var(--bs-primary-rgb), 0.12);
+    border: 1px solid var(--bs-primary) !important;
+    color: var(--bs-primary);
+    font-size: 1.05em;
+    font-weight: 500;
+    padding: 7px 16px;
+}
+
+[data-bs-theme=dark] #downloadRepo {
+    border-color: var(--bs-primary-text-emphasis) !important;
+    color: var(--bs-primary-text-emphasis);
+}
+
+/* Generate / validate / import / reset / download */
+#generateCodemetaV3,
+#generateCodemetaV2,
+#generateSchemaOrg,
+#validateCodemeta,
+#importCodemeta,
+#resetForm,
+#downloadCodemeta input {
+    font-size: 1em;
+    padding: 6px 12px;
+    white-space: nowrap;
 }
