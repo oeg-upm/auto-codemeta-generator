@@ -15,6 +15,10 @@ const CODEMETA_CONTEXTS = {
     "3.0": {
         path: "./data/contexts/codemeta-3.0.jsonld",
         url: "https://w3id.org/codemeta/3.0"
+    },
+    "3.1": {
+        path: "./data/contexts/codemeta-3.0.jsonld",
+        url: "https://w3id.org/codemeta/3.1"
     }
 }
 
@@ -39,7 +43,8 @@ const loadContextData = async () => {
         contextV2["@context"]["type"] = "@type";
     return {
         [CODEMETA_CONTEXTS["2.0"].url]: contextV2,
-        [CODEMETA_CONTEXTS["3.0"].url]: contextV3
+        [CODEMETA_CONTEXTS["3.0"].url]: contextV3,
+        [CODEMETA_CONTEXTS["3.1"].url]: contextV3,
     }
 }
 
@@ -479,7 +484,8 @@ async function generateCodemeta(codemetaVersion = "3.0") {
         transformIdAndType(compacted);
         compacted["@type"] = ["SoftwareSourceCode", "SoftwareApplication"];
 
-        if (codemetaVersion === "3.0") {
+        // if (codemetaVersion === "3.0") {
+        if (codemetaVersion.startsWith("3.")) {
             delete compacted['codemeta:contIntegration'];
         } else if (codemetaVersion === "2.0") {
             delete compacted['codemeta:continuousIntegration'];
@@ -669,6 +675,7 @@ function importKeywords(keywords) {
 }
 
 function importRequirements(requirements) {
+    console.log('importRequirements - received:', requirements.length, 'items');
     if (requirements === undefined) {
         return;
     }

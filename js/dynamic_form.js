@@ -491,6 +491,13 @@ function initCallbacks() {
         generateCodemeta("3.0");
     });
 
+    document.querySelector('#generateCodemetaV31').disabled = false;
+    document.querySelector('#generateCodemetaV31')
+    .addEventListener('click', () => {
+        lastCodemetaVersion = "3.1";
+        generateCodemeta("3.1");
+    });
+
     document.querySelector('#generateSchemaOrg').disabled = false;
     document.querySelector('#generateSchemaOrg')
     .addEventListener('click', () => generateSchemaOrg());
