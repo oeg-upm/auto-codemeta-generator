@@ -131,9 +131,9 @@ function migrateRemoteRepository() {
     resetForm()
     repoUrlInput.value = repoUrl;  
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
-    // fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
-    // requestOptions)
-    fetch('./server/generated-files/somef_code_v4.json')
+    fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
+    requestOptions)
+    // fetch('./server/generated-files/somef_code_v4.json')
     .then(response => {
 
         if (!response.ok) {

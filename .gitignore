@@ -2,3 +2,6 @@
 cypress/screenshots
 node_modules
 package-lock.json
+server/venv/
+server/venv311/
+server/__pycache__/
