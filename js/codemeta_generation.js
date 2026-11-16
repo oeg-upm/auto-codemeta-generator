@@ -13,22 +13,27 @@ const CODEMETA_CONTEXTS = {
         url: "https://doi.org/10.5063/schema/codemeta-2.0"
     },
     "3.0": {
-        path: "./data/contexts/codemeta-3.0.jsonld",
-        url: "https://w3id.org/codemeta/3.0"
+    path: "./data/contexts/codemeta-3.0.jsonld",
+    url: "https://w3id.org/codemeta/3.0"
     },
     "3.1": {
         path: "./data/contexts/codemeta-3.0.jsonld",
         url: "https://w3id.org/codemeta/3.1"
+    },
+    "4.0": { 
+        path: "./data/contexts/codemeta-4.0.jsonld", 
+        url: "https://w3id.org/codemeta/4.0" 
     }
 }
 
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
 
 const loadContextData = async () => {
-    const [contextV2, contextV3] =
+    const [contextV2, contextV3, contextV4] =
         await Promise.all([
             fetch(CODEMETA_CONTEXTS["2.0"].path).then(response => response.json()),
-            fetch(CODEMETA_CONTEXTS["3.0"].path).then(response => response.json())
+            fetch(CODEMETA_CONTEXTS["3.1"].path).then(response => response.json()),
+            fetch(CODEMETA_CONTEXTS["4.0"].path).then(response => response.json()),
         ]);
 
         contextV3["@context"]["id"] = "@id";
@@ -37,14 +42,19 @@ const loadContextData = async () => {
         contextV3["@context"]["author"] = {"@id": "schema:author", "@container": "@list"};
         contextV2["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
         contextV3["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
+        contextV4["@context"]["keywords"] = {"@id": "schema:keywords", "@container": "@list"};
         contextV2["@context"]["softwareRequirements"] = {"@id": "schema:softwareRequirements", "@container": "@list"};
         contextV3["@context"]["softwareRequirements"] = {"@id": "schema:softwareRequirements", "@container": "@list"};
+        contextV4["@context"]["softwareRequirements"] = {"@id": "schema:softwareRequirements", "@container": "@list"};
+        contextV4["@context"]["archivedAt"] = {"@id": "schema:archivedAt", "@type": "@id", "@container": "@set"};
+        contextV4["@context"]["featureList"] = {"@id": "schema:featureList", "@container": "@set"};
         contextV2["@context"]["id"] = "@id";
         contextV2["@context"]["type"] = "@type";
     return {
         [CODEMETA_CONTEXTS["2.0"].url]: contextV2,
         [CODEMETA_CONTEXTS["3.0"].url]: contextV3,
         [CODEMETA_CONTEXTS["3.1"].url]: contextV3,
+        [CODEMETA_CONTEXTS["4.0"].url]: contextV4,
     }
 }
 
@@ -68,6 +78,25 @@ const initJsonldLoader = contexts => {
 
 const getAllCodemetaContextUrls = () => {
     return Object.values(CODEMETA_CONTEXTS).map(context => context.url);
+}
+
+const getContextUrlsForVersion = (version) => {
+    if (version === "4.0") {
+        return [CODEMETA_CONTEXTS["4.0"].url];
+    }
+    return [
+        CODEMETA_CONTEXTS["2.0"].url,
+        CODEMETA_CONTEXTS["3.0"].url
+    ];
+}
+const getCodemetaVersionFromDoc = (doc) => {
+    const context = doc["@context"];
+    const urls = Array.isArray(context) ? context : [context];
+    const isV4 = urls.some(url =>
+        typeof url === "string" &&
+        url.startsWith(CODEMETA_CONTEXTS["4.0"].url)
+    );
+    return isV4 ? "4.0" : "3.0";
 }
 
 function emptyToUndefined(v) {
@@ -109,6 +138,8 @@ const directCodemetaFields = [
     'name',
     'version',
     'description',
+    'creditText',
+    'citeAsID',
     'applicationCategory',
     'releaseNotes',
     'funding',
@@ -127,7 +158,9 @@ const splittedCodemetaFields = [
     // ['softwareRequirements', '\n'],
     // ['softwareRequirements', ','],
     ['relatedLink', '\n'],
-    ['identifier', ',']
+    ['identifier', ','],
+    ['alternateName', '\n'],
+    ['archivedAt', '\n']
 ]
 
 // Names of codemeta properties with a matching HTML field name,
@@ -244,6 +277,19 @@ function generateKeyword(idPrefix) {
     }
 
     return name;
+}
+
+function generateFeatureList() {
+    var features = [];
+    var nbFeatures = getNbFeatures();
+
+    for (let featureId = 1; featureId <= nbFeatures; featureId++) {
+        const feature = getIfSet(`#featureList_${featureId}_text`);
+        if (feature !== undefined) {
+            features.push(feature);
+        }
+    }
+    return features;
 }
 
 function generateRole(id) {
@@ -384,9 +430,9 @@ function generateReview() {
     return doc;
 }
 
-async function buildExpandedDocWithAllContexts() {
+async function buildExpandedDocWithAllContexts(codemetaVersion) {
     var doc = {
-        "@context": getAllCodemetaContextUrls(),
+        "@context": getContextUrlsForVersion(codemetaVersion),
         "@type": "SoftwareSourceCode"
     };
 
@@ -410,13 +456,19 @@ async function buildExpandedDocWithAllContexts() {
     if (referencePublications.length > 0) {
         doc["referencePublication"] = referencePublications;
     }
+
+    var citeWith = generateCiteWith();
+    if (citeWith.length > 0) {
+        doc["citeWith"] = citeWith;
+    }
+
     // Generate simple fields parsed simply by splitting
     splittedCodemetaFields.forEach(function (item, index) {
         const id = item[0];
         const separator = item[1];
         const value = getIfSet('#' + id);
         if (value !== undefined) {
-            doc[id] = value.split(separator).map(trimSpaces);
+            doc[id] = value.split(separator).map(trimSpaces).filter(s => s.length > 0);
         }
     });
 
@@ -433,6 +485,10 @@ async function buildExpandedDocWithAllContexts() {
     if (keywords.length > 0) {
         doc["keywords"] = keywords;
     }
+    var featureList = generateFeatureList();
+   if (featureList.length > 0) {
+       doc["featureList"] = featureList;
+   }
     var maintainers = generateMaintainers();
     if (maintainers.length > 0) {
         doc["maintainer"] = maintainers;
@@ -468,19 +524,24 @@ function transformIdAndType(obj) {
         obj.forEach(transformIdAndType); 
     }
 }
-// change to v3.0 as default
-async function generateCodemeta(codemetaVersion = "3.0") {
+
+let generationToken = 0;
+// change to v4.0 as default
+async function generateCodemeta(codemetaVersion = "4.0") {
      if (skipAutoGenerate) return;
      
+    const token = ++generationToken;
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
     if (inputForm.checkValidity()) {
         // Expand document with all contexts before compacting
         // to allow generating property from any context
-        const expanded = await buildExpandedDocWithAllContexts();
+        const expanded = await buildExpandedDocWithAllContexts(codemetaVersion);
+        if (token !== generationToken) return;
 
         const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
-
+        if (token !== generationToken) return;
+        
         transformIdAndType(compacted);
         compacted["@type"] = ["SoftwareSourceCode", "SoftwareApplication"];
 
@@ -674,6 +735,27 @@ function importKeywords(keywords) {
     });
 }
 
+function importFeatureList(features) {
+    if (features === undefined) {
+        return;
+    }
+    const featureList = Array.isArray(features) ? features : [features];
+
+    featureList.forEach(function (feature) {
+        if (feature === undefined || feature === null) {
+            return;
+        }
+        if (typeof feature === 'object') {
+            feature = feature['@id'] || feature.url || feature.name;
+        }
+        if (!feature) {
+            return;
+        }
+        const featureId = addFeature();
+        setIfDefined(`#featureList_${featureId}_text`, feature);
+    });
+}
+
 function importRequirements(requirements) {
     console.log('importRequirements - received:', requirements.length, 'items');
     if (requirements === undefined) {
@@ -720,7 +802,7 @@ function importPersons(prefix, legend, docs) {
     if (allAuthorDocs.length > 0 ) {
         allAuthorDocs.forEach(function (doc, index) {
             var personId = addPerson(prefix, legend);
-            const authorType = doc['type'] || 'Person'; 
+            const authorType = getDocumentType(doc) || 'Person'; 
             const personPrefix = `${prefix}_${personId}`;
             const typeSelect = document.querySelector(`#${personPrefix}_type`);
     
@@ -749,11 +831,13 @@ function importPersons(prefix, legend, docs) {
 }
 
 async function recompactDocWithAllContexts(doc) {
-    const allContexts = getAllCodemetaContextUrls();
+    // const allContexts = getAllCodemetaContextUrls();
+    const version = getCodemetaVersionFromDoc(doc);
+    const contexts = getContextUrlsForVersion(version);
     const newDoc = structuredClone(doc);
-    newDoc["@context"] = allContexts;
+    newDoc["@context"] = contexts;
     const expanded = await jsonld.expand(newDoc);
-    const compacted = await jsonld.compact(expanded, allContexts);
+    const compacted = await jsonld.compact(expanded, contexts);
     return compacted;
 }
 
@@ -783,6 +867,25 @@ async function importCodemeta() {
     directCodemetaFields.forEach(function (item, index) {
         setIfDefined('#' + item, doc[item]);
     });
+
+    // creditText may arrive as an array from somef
+    if (doc['creditText'] !== undefined) {
+        setIfDefined('#creditText', Array.isArray(doc['creditText'])
+            ? doc['creditText'].join('\n')
+            : doc['creditText']);
+    }
+
+     // featureList may arrive as an array from somef
+    if (doc['featureList'] !== undefined) {
+         importFeatureList(doc['featureList']);
+     }
+
+    if (doc['citeAsID'] !== undefined) {
+        setIfDefined('#citeAsID', Array.isArray(doc['citeAsID'])
+            ? doc['citeAsID'].join('\n')
+            : doc['citeAsID']);
+    }
+
     importShortOrg('#funder', doc["funder"]);
     // importReview(doc["review"]);
 
@@ -830,6 +933,10 @@ async function importCodemeta() {
     if (doc['referencePublication']) {
         importReferencePublication(doc['referencePublication']);
     }
+
+     if (doc['citeWith']) {
+        importCiteWith(doc['citeWith']);
+    }
     if (doc['softwareRequirements']) {
         importRequirements(doc['softwareRequirements'])
     }
@@ -842,26 +949,26 @@ function importReferencePublication(references) {
     if (references === undefined) {
         return;
     }
-    references.forEach((reference, index) => {
-        //TODO: will be an array like keywords and author in the future. Right now we manage just the first reference
-        // referencePublicationUrl
-        // publicationTitle
-        // publicationDOI
-        // issn
-        // publicationDatePublished
-        document.querySelector(`#referencePublicationUrl`).value = reference['@id'] || '';
-        document.querySelector(`#publicationTitle`).value = reference.name || '';
-        document.querySelector(`#publicationDatePublished`).value = reference.datePublished || '';
-        document.querySelector(`#issn`).value = reference.issn || '';
+    const referenceList = Array.isArray(references) ? references : [references];
+    if (referenceList.length === 0) {
+        return;
+    }
+    const reference = referenceList[0];
+    
+    document.querySelector(`#referencePublicationUrl`).value = reference['@id'] || reference.url || '';
+    document.querySelector(`#publicationTitle`).value = reference.name || '';
+    document.querySelector(`#publicationDOI`).value =
+        Array.isArray(reference.identifier)
+        ? reference.identifier.join(', ')
+        : (reference.identifier || '');
+    document.querySelector(`#publicationDatePublished`).value = reference.datePublished || '';
+    document.querySelector(`#issn`).value = reference.issn || '';
        
-        if (reference.author && reference.author.length > 0) {         
-            importPersons('author_reference', 'Author_ref', reference.author);
-        }
-
-
-
-    });
+    if (reference.author && reference.author.length > 0) {         
+        importPersons('author_reference', 'Author_ref', reference.author);
+    }
 }
+
 function loadStateFromStorage() {
     var codemetaText = sessionStorage.getItem('codemetaText')
     if (codemetaText) {
@@ -912,5 +1019,90 @@ function importMaintainers(maintainers) {
         document.querySelector(`#${prefix}_name`).value = person.name || '';
         document.querySelector(`#${prefix}_identifier`).value = person.identifier || '';
         document.querySelector(`#${prefix}_email`).value = person.email || '';
+    });
+}
+
+
+function generateCiteWith() {
+    var works = [];
+    var nbWorks = getNbCiteWiths();
+    for (let workId = 1; workId <= nbWorks; workId++) {
+        const work = generateCiteWithWork(workId);
+        if (work !== undefined) {
+            works.push(work);
+        }
+    }
+    return works;
+}
+
+function generateCiteWithWork(workId) {
+    const prefix = `citeWith_${workId}`;
+    const identifier = getIfSet(`#${prefix}_identifier`);
+    const url = getIfSet(`#${prefix}_url`);
+    const name = getIfSet(`#${prefix}_name`);
+    const datePublished = getIfSet(`#${prefix}_datePublished`);
+    const authors = generatePersons(`${prefix}_author`);
+
+    // somef omits @id for authors without a real URI; do the same
+    authors.forEach(function (author) {
+        if (isBlankNodeId(author["@id"])) {
+            delete author["@id"];
+        }
+    });
+
+    if (!identifier && !url && !name && !datePublished && authors.length === 0) {
+        return undefined;
+    }
+
+    const doc = {
+        "@type": getIfSet(`#${prefix}_type`) || "ScholarlyArticle"
+    };
+
+    if (identifier) doc["identifier"] = identifier;
+    if (url) doc["url"] = url;
+    if (name) doc["name"] = name;
+    if (datePublished) doc["datePublished"] = datePublished;
+    if (authors.length > 0) doc["author"] = authors;
+
+    return doc;
+}
+
+function importCiteWith(works) {
+    if (works === undefined) {
+        return;
+    }
+    const workList = Array.isArray(works) ? works : [works];
+
+    workList.forEach(function (work) {
+        if (typeof work === 'string') {
+            work = isUrl(work)
+                ? { "@type": "ScholarlyArticle", url: work }
+                : { "@type": "ScholarlyArticle", identifier: work };
+        }
+
+        const workId = addCiteWith();
+        const prefix = `citeWith_${workId}`;
+
+        const typeSelect = document.querySelector(`#${prefix}_type`);
+        const type = getDocumentType(work) || 'ScholarlyArticle';
+        if (!Array.from(typeSelect.options).some(option => option.value === type)) {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeSelect.appendChild(option);
+        }
+        typeSelect.value = type;
+
+        setIfDefined(`#${prefix}_identifier`, Array.isArray(work.identifier)
+            ? work.identifier.join(', ')
+            : work.identifier);
+        setIfDefined(`#${prefix}_url`, work.url);
+        setIfDefined(`#${prefix}_name`, work.name);
+        setIfDefined(`#${prefix}_datePublished`, work.datePublished);
+
+        if (work.author) {
+            const authors = Array.isArray(work.author) ? work.author : [work.author];
+            importPersons(`${prefix}_author`, 'Author', authors);
+        }
     });
 }

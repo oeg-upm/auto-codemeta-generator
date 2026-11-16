@@ -28,6 +28,7 @@ function isCompactTypeEqual(type, compactedType) {
         || type == `schema:${compactedType}`
         || type == `codemeta:${compactedType}`
         || type == `http://schema.org/${compactedType}`
+        || type == `https://schema.org/${compactedType}`
     );
 }
 
@@ -290,6 +291,13 @@ var softwareFieldValidators = {
     "url": validateUrls,
     "relatedLink": validateUrls,
     "review": validateReview,
+
+    "alternateName": validateTexts,
+    "archivedAt": validateUrls,
+    "creditText": validateTexts,
+    "featureList": validateTextsOrUrls,
+    "citeAsID": validateTextsOrUrls,
+    "citeWith": noValidation,
 
     "softwareSuggestions": noValidation, // TODO: validate SoftwareSourceCode
     "maintainer": validateActors,

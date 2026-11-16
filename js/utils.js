@@ -25,7 +25,28 @@ function setNbPersons(prefix, nb) {
 function setNbKeywords(nb) {
     var nbField = document.querySelector(`#keyword_nb`);
     nbField.value = nb;
+} 
+
+function getNbFeatures() {
+    var nbField = document.querySelector('#featureList_nb');
+    return parseInt(nbField.value, 10);
 }
+
+function setNbFeatures(nb) {
+    var nbField = document.querySelector('#featureList_nb');
+    nbField.value = nb;
+}
+
+function getNbCiteWiths() {
+    var nbField = document.querySelector('#citeWith_nb');
+    return parseInt(nbField.value, 10);
+}
+
+function setNbCiteWiths(nb) {
+    var nbField = document.querySelector('#citeWith_nb');
+    nbField.value = nb;
+}
+
 function setError(msg) {
     document.querySelector("#errorMessage").innerHTML = msg;
 }

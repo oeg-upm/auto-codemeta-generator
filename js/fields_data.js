@@ -68,7 +68,7 @@ function validateLicense(e) {
         
         licenseField.value = ""; 
         licenseField.setCustomValidity('');
-        generateCodemeta();
+        generateCodemeta(lastCodemetaVersion);
     }
 }
 
@@ -93,7 +93,7 @@ function validateLicenseOld(e) {
 
         licenseField.value = "";
         licenseField.setCustomValidity('');
-        generateCodemeta();
+        generateCodemeta(lastCodemetaVersion);
     }
 }
 function removeLicense(btn) {
@@ -106,7 +106,7 @@ function removeLicense(btn) {
     licenseField.setAttribute('placeholder', selectedLicenses.join(', '));
     licenseField.value = "";
     btn.parentElement.remove();
-    generateCodemeta();
+    generateCodemeta(lastCodemetaVersion);
 
 }
 

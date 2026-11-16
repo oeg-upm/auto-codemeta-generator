@@ -484,10 +484,10 @@ describe('One author with a role', function () {
                 ]
             });
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
@@ -523,10 +523,10 @@ describe('One author with a role', function () {
         cy.get('#author_1_startDate_1').type('2024-04-04');
         cy.get('#author_1_endDate_1').type('2024-05-05');
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
@@ -570,10 +570,10 @@ describe('One author with a role', function () {
         cy.get('#author_1_startDate_1').type('2024-04-04');
         cy.get('#author_1_endDate_1').type('2024-05-05');
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
@@ -724,10 +724,10 @@ describe('Multiple authors', function () {
         cy.get('#author_2_startDate_0').type('2024-04-04');
         cy.get('#author_2_endDate_0').type('2024-05-05');
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
@@ -773,10 +773,10 @@ describe('Multiple authors', function () {
         cy.get('#author_1_startDate_0').type('2024-03-04');
         cy.get('#author_1_endDate_0').type('2024-04-03');
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "author": [
@@ -898,10 +898,10 @@ describe('Contributors', function () {
         cy.get('#contributor_add').click();
         cy.get('#contributor_1_givenName').type('Jane');
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": {
@@ -921,10 +921,10 @@ describe('Contributors', function () {
         cy.get('#contributor_add').click();
         cy.get('#contributor_2_givenName').type('Joe');
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": [
@@ -1020,10 +1020,10 @@ describe('One contributor with a role', function () {
                 ]
             });
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "contributor": [
