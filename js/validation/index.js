@@ -133,7 +133,7 @@ function migrateRemoteRepository() {
     const apiUrl = CONFIG.fastapi_url.replace(/\/$/, ""); 
     fetch(`${apiUrl}/metadata?url=${encodeURIComponent(repoUrl)}&threshold=0.8&ignoreClassifiers=false`, 
     requestOptions)
-    // fetch('./server/generated-files/somef_code_authors.json')
+    // fetch('./server/generated-files/somef_code_v4.json')
     .then(response => {
 
         if (!response.ok) {
@@ -427,25 +427,71 @@ function populateFieldsCodemeta(metadata) {
         document.getElementById('runtimePlatform').value = runtimePlatform;
     }
 
-    if (metadata.referencePublication && metadata.referencePublication.length > 0) {
-        // console.log('DEBUG referencePublication:', JSON.stringify(metadata.referencePublication, null, 2));
+    // if (metadata.referencePublication && metadata.referencePublication.length > 0) {
+    if (metadata.referencePublication) {
         // TODO: For now, we only take the first reference we find, but in the future we need to find out a way to display all the references because it’s an array.
-        const firstPublication = metadata.referencePublication[0]; 
+        // const firstPublication = metadata.referencePublication[0]; 
+        const referencePublications = Array.isArray(metadata.referencePublication)
+            ? metadata.referencePublication
+            : [metadata.referencePublication];
 
-        if (firstPublication.url) 
-            document.getElementById('referencePublicationUrl').value = firstPublication.url;
-        if (firstPublication.name) 
-            document.getElementById('publicationTitle').value = firstPublication.name;
-        if (firstPublication.identifier) 
-            document.getElementById('publicationDOI').value = firstPublication.identifier;
-        if (firstPublication.issn) 
-            document.getElementById('issn').value = firstPublication.issn;
-        if (firstPublication.datePublished)
-            document.getElementById('publicationDatePublished').value = firstPublication.datePublished;
-        if (firstPublication.author && firstPublication.author.length > 0) 
-            populateAuthors(firstPublication.author, true)
+        if (referencePublications.length > 0) {
+            const firstPublication = referencePublications[0];   
+
+            if (firstPublication.url) 
+                document.getElementById('referencePublicationUrl').value = firstPublication.url;
+            if (firstPublication.name) 
+                document.getElementById('publicationTitle').value = firstPublication.name;
+            if (firstPublication.identifier) 
+                document.getElementById('publicationDOI').value = firstPublication.identifier;
+            if (firstPublication.issn) 
+                document.getElementById('issn').value = firstPublication.issn;
+            if (firstPublication.datePublished)
+                document.getElementById('publicationDatePublished').value = firstPublication.datePublished;
+            if (firstPublication.author && firstPublication.author.length > 0) 
+                populateAuthors(firstPublication.author, true)
+        }
 
    }
+
+    if (metadata.archivedAt) {
+        const archivedAt = Array.isArray(metadata.archivedAt)
+            ? metadata.archivedAt
+            : [metadata.archivedAt];
+        document.getElementById('archivedAt').value = archivedAt
+            .map(a => typeof a === 'string' ? a : a['@id'])
+            .filter(a => a)
+            .join('\n');
+    }
+
+    if (metadata.creditText) {
+        const creditText = Array.isArray(metadata.creditText)
+            ? metadata.creditText
+            : [metadata.creditText];
+        document.getElementById('creditText').value = creditText.join('\n');
+    }
+
+    if (metadata.featureList) {
+        importFeatureList(metadata.featureList);
+    }
+
+    if (metadata.citeAsID) {
+        const citeAsID = Array.isArray(metadata.citeAsID)
+            ? metadata.citeAsID
+            : [metadata.citeAsID];
+        document.getElementById('citeAsID').value = citeAsID.join('\n');
+    }
+
+    if (metadata.citeWith) {
+        importCiteWith(metadata.citeWith);
+    }
+
+   if (metadata.alternateName) {
+        const alternateNames = Array.isArray(metadata.alternateName)
+            ? metadata.alternateName
+            : [metadata.alternateName];
+        document.getElementById('alternateName').value = alternateNames.join('\n');
+    }
 
     if (metadata.relatedLinks){
         let relatedLinks = metadata.relatedLinks

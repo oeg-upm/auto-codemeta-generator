@@ -99,7 +99,7 @@ CodeMeta website.
 
   <header>
     <!-- id only required for menu-skipping accessibility shortcut in navigation -->
-    <h1 id="jump-to-content">Auto CodeMeta generator v3.0</h1>
+    <h1 id="jump-to-content">Auto CodeMeta generator v4.0</h1>
   </header>
 
   <main>
@@ -146,6 +146,14 @@ CodeMeta website.
                 <span class="field-description" id="name_descr">the software title</span>
             </p>
 
+            <p title="Alternative names or aliases for the software">
+               <label for="alternateName">Alternative names</label>
+                <textarea rows="3" cols="50"
+                    name="alternateName" id="alternateName"
+                    placeholder="My Software+MySoft"></textarea>
+                <br />
+                <span class="field-description">one alternative name per line (CodeMeta 4.0 only)</span>
+            </p>
             <p title="a brief description of the software">
                 <label for="description">Description</label>
                 <textarea rows="10" cols="50"
@@ -153,6 +161,30 @@ CodeMeta website.
                     placeholder="My Software computes ephemerides and orbit propagation. It has been developed from early ´80." ></textarea>
             </p>
 
+            <p title="Text that can be used to credit person(s) and/or organization(s) associated with a published Creative Work">
+                <label for="creditText">Credit text</label>
+                <textarea rows="4" cols="50"
+                    name="creditText" id="creditText"
+                    placeholder="Garijo, D., Poveda-Villalón, M. (My Software). Available at: https://example.org/MySoftware"></textarea>
+                <br />
+                <span class="field-description">free text used to credit the software (CodeMeta 4.0 only)</span>
+            </p>
+
+            <fieldset class="features" id="featureList_container"
+                title="Features or modules provided by this application (and possibly required by other applications).">
+                <legend title="Features or modules provided by this application (and possibly required by other applications).">
+                    Features
+                </legend>
+
+                <input type="hidden" id="featureList_nb" value="0" />
+
+                <div id="addRemoveFeatures">
+                    <input type="button" id="featureList_add" value="Add one"
+                        onclick="addFeature()" />
+                    <input type="button" id="featureList_remove" value="Remove last"
+                        onclick="removeFeature(true)" />
+                </div>
+            </fieldset>
 
             <p title="The date on which the software was created.">
                 <label for="dateCreated">Creation date</label>
@@ -199,20 +231,14 @@ CodeMeta website.
                     such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a>
                 </span>
             </p>
-            <!-- TODO:define better
 
-            I looked at the schema.org definition of identifier (https://schema.org/identifier),
-            it can be text, url or PropertyValue.
-            Used as follows in data representation with microdata:
-
-            <div property="identifier" typeof="PropertyValue">
-            <span property="propertyID">DOI</span>:
-            <span property="value">10.151.xxxxx</span>
-            </div>
-            we can use that with identifier-type and identifier-value to have a clearer idea
-            of what needs to be in the input.
-
-            -->
+             <p title="Permanent identifier to a specific citable version of the software">
+                <label for="citeAsID">Cite as ID</label>
+                <input type="text" name="citeAsID" id="citeAsID"
+                    placeholder="https://doi.org/10.5281/zenodo.14767999" />
+                <br />
+                <span class="field-description">permanent identifier of the citable version (CodeMeta 4.0 only)</span>
+            </p>
 
             <p title="Type of the software application">
                 <label for="applicationCategory">Application category</label>
@@ -347,6 +373,16 @@ CodeMeta website.
                     placeholder="https://example.org/MySoftware.tar.gz" />
             </p>
 
+            <p title="Indicates a page or other link involved in archival of a CreativeWork.">"
+                <label for="archivedAt">Archived at</label>
+                <textarea rows="3" cols="50"
+                    name="archivedAt" id="archivedAt"
+                    placeholder="https://archive.softwareheritage.org/swh:1:rev:..."></textarea>
+                <br />
+                <span class="field-description">one archive URL per line (CodeMeta 4.0 only)</span>
+            </p>
+ 
+
             <p title="a brief description of the software">
                 <label for="releaseNotes">Release notes</label>
                 <br />
@@ -428,6 +464,28 @@ Bugfixes: that and this." ></textarea>
                     name="reviewBody" id="reviewBody"
                     placeholder="Review about my software." ></textarea>
             </p> -->
+        </fieldset>
+
+        <fieldset id="fieldsetCiteWith" class="leafFieldset"
+            title="Companion works that should be cited with the version of this software">
+            <legend title="Companion works that should be cited with the version of this software">
+                Cite with
+            </legend>
+            <p>
+                <span class="field-description">
+                    Publications that should be cited together with this software (CodeMeta 4.0 only).
+                </span>
+            </p>
+
+            <div id="citeWith_container">
+                <input type="hidden" id="citeWith_nb" value="0" />
+                <div id="addRemoveCiteWith">
+                    <input type="button" id="citeWith_add" value="Add one"
+                        onclick="addCiteWith();" />
+                    <input type="button" id="citeWith_remove" value="Remove last"
+                        onclick="removeCiteWith(true);" />
+                </div>
+            </div>
         </fieldset>
 
         <fieldset id="fieldsetAdditionalInfo" class="leafFieldset">
@@ -521,8 +579,10 @@ Bugfixes: that and this." ></textarea>
     </form>
     <div class="spinner" id="spinner"></div>
     <form>
-        <input type="button" id="generateCodemetaV3" value="Generate codemeta.json v3.0" disabled
-            title="Creates a codemeta.json v3.0 file below, from the information provided above." />
+        <input type="button" id="generateCodemetaV4" value="Generate codemeta.json v4.0" disabled
+            title="Creates a codemeta.json v4.0 file below, from the information provided above." />
+        <input type="button" id="generateCodemetaV31" value="Generate codemeta.json v3.1" disabled
+            title="Creates a codemeta.json v3.1 file below, from the information provided above." />
         <input type="button" id="generateCodemetaV2" value="Generate codemeta.json v2.0" disabled
             title="Creates a codemeta.json v2.0 file below, from the information provided above." />
         <input type="button" id="generateSchemaOrg" value="Generate schema.org JSON-LD" disabled
@@ -557,8 +617,9 @@ Bugfixes: that and this." ></textarea>
 
     <p>
       <strong>CodeMeta vocabulary:</strong>
+      <a href="https://w3id.org/codemeta/4.0">v4.0</a>
+      <a href="https://w3id.org/codemeta/3.1">v3.1</a>
       <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a> / 
-      <a href="https://w3id.org/codemeta/3.0">v3.0</a>
       &nbsp;&nbsp;|&nbsp;&nbsp;
       <span id="version_somef">getting somef version...</span>
       &nbsp;&nbsp;|&nbsp;&nbsp;

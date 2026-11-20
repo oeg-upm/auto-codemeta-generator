@@ -18,7 +18,7 @@ const personFields = [
     'identifier'
 ];
 
-let lastCodemetaVersion = "3.0";
+let lastCodemetaVersion = "4.0";
 let skipAutoGenerate = false;
 
 function createPersonFieldset(personPrefix, legend) {
@@ -31,7 +31,7 @@ function createPersonFieldset(personPrefix, legend) {
 
     let rolInputs = '';
 
-    if (personPrefix.includes("_reference_")) {  
+    if (personPrefix.includes("_reference_") || personPrefix.startsWith("citeWith_")) {  
         rolInputs += `
             <input type="hidden" id="${personPrefix}_role_index" value="0" />
             <input type="button" id="${personPrefix}_role_add" value="Add one role" style="display: none;" />
@@ -165,6 +165,25 @@ function createKeywordFieldset(keywordPrefix, legend) {
     return fieldsetk;
 }
 
+function createFeatureFieldset(featurePrefix, legend) {
+    var fieldset = document.createElement("fieldset");
+    fieldset.classList.add("feature");
+    fieldset.classList.add("leafFieldset");
+    fieldset.id = featurePrefix;
+
+    fieldset.innerHTML = `
+        <legend>${legend}</legend>
+        <p>
+            <label for="${featurePrefix}_text">Feature</label>
+            <textarea rows="3" cols="50" id="${featurePrefix}_text"
+                name="${featurePrefix}_text"
+                placeholder="Ontology validation"></textarea>
+        </p>
+    `;
+
+    return fieldset;
+}
+
 function addPersonWithId(container, prefix, legend, id) {
     var personPrefix = `${prefix}_${id}`;
     var fieldset = createPersonFieldset(personPrefix, `${legend} #${id}`);
@@ -183,6 +202,12 @@ function addKeywordWithId(containerk, id) {
     var keywordPrefix = `keyword_${id}`;
     var fieldset = createKeywordFieldset(keywordPrefix, `Keyword #${id}`);
     containerk.appendChild(fieldset);
+}
+
+function addFeatureWithId(container, id) {
+    var featurePrefix = `featureList_${id}`;
+    var fieldset = createFeatureFieldset(featurePrefix, `Feature #${id}`);
+    container.appendChild(fieldset);
 }
 
 function movePerson(prefix, id1, direction) {
@@ -286,6 +311,36 @@ function removeKeyword(keywordId, deleteStorage) {
 
     if (deleteStorage)
         generateCodemeta(lastCodemetaVersion);
+}
+
+function addFeature() {
+    var container = document.querySelector('#featureList_container');
+    var featureId = getNbFeatures() + 1;
+
+    addFeatureWithId(container, featureId);
+    setNbFeatures(featureId);
+
+    return featureId;
+}
+
+function removeFeature(deleteStorage) {
+    var featureId = getNbFeatures();
+    if (featureId <= 0) {
+        return;
+    }
+    document.querySelector(`#featureList_${featureId}`).remove();
+    setNbFeatures(featureId - 1);
+
+    if (deleteStorage) {
+        generateCodemeta(lastCodemetaVersion);
+    }
+}
+
+function removeFeatures(deleteStorage) {
+    var nbFeatures = getNbFeatures();
+    for (let featureId = 1; featureId <= nbFeatures; featureId++) {
+        removeFeature(deleteStorage);
+    }
 }
 
 function removePerson(prefix, deleteStorage) {
@@ -437,6 +492,8 @@ function resetForm() {
     removePersons('contributor', false);
     removePersons('author_reference', false);
     removeKeywords(false);
+    removeFeatures(false)
+    removeCiteWiths(false)
     removeMaintainers(false);
     RemoveRequirements()
     // Reset the list of selected licenses
@@ -482,13 +539,20 @@ function initCallbacks() {
         generateCodemeta("2.0");
     });
 
-    document.querySelector('#generateCodemetaV3').disabled = false;
+    document.querySelector('#generateCodemetaV31').disabled = false;
     // document.querySelector('#generateCodemetaV3')
     //     .addEventListener('click', () => generateCodemeta("3.0"));
-    document.querySelector('#generateCodemetaV3')
+    document.querySelector('#generateCodemetaV31')
     .addEventListener('click', () => {
-        lastCodemetaVersion = "3.0";
-        generateCodemeta("3.0");
+        lastCodemetaVersion = "3.1";
+        generateCodemeta("3.1");
+    });
+
+    document.querySelector('#generateCodemetaV4').disabled = false;
+    document.querySelector('#generateCodemetaV4')
+    .addEventListener('click', () => {
+        lastCodemetaVersion = "4.0";
+        generateCodemeta("4.0");
     });
 
     document.querySelector('#generateSchemaOrg').disabled = false;
@@ -641,5 +705,96 @@ function removeMaintainers(deleteStorage) {
     var nb = getNbMaintainers();
     for (let id = 1; id <= nb; id++) {
         removeMaintainer(deleteStorage);
+    }
+}
+
+function createCiteWithFieldset(workPrefix, legend) {
+    var fieldset = document.createElement("fieldset");
+    fieldset.classList.add("citeWith");
+    fieldset.classList.add("leafFieldset");
+    fieldset.id = workPrefix;
+
+    fieldset.innerHTML = `
+        <legend>${legend}</legend>
+
+        <p>
+            <label for="${workPrefix}_type">Type</label>
+            <select id="${workPrefix}_type" name="${workPrefix}_type">
+                <option value="ScholarlyArticle">ScholarlyArticle</option>
+                <option value="CreativeWork">CreativeWork</option>
+                <option value="Article">Article</option>
+                <option value="SoftwareSourceCode">SoftwareSourceCode</option>
+            </select>
+        </p>
+        <p>
+            <label for="${workPrefix}_identifier">DOI / Identifier</label>
+            <input type="text" id="${workPrefix}_identifier" name="${workPrefix}_identifier"
+                placeholder="10.1162/qss_a_00167" />
+        </p>
+        <p>
+            <label for="${workPrefix}_url">URL</label>
+            <input type="url" id="${workPrefix}_url" name="${workPrefix}_url"
+                placeholder="https://doi.org/10.1162/qss_a_00167" />
+        </p>
+        <p>
+            <label for="${workPrefix}_name">Title</label>
+            <input type="text" id="${workPrefix}_name" name="${workPrefix}_name"
+                placeholder="Title of the companion work" />
+        </p>
+        <p>
+            <label for="${workPrefix}_datePublished">Date published</label>
+            <input type="text" id="${workPrefix}_datePublished" name="${workPrefix}_datePublished"
+                placeholder="2021" />
+        </p>
+
+        <fieldset class="persons" id="${workPrefix}_author_container">
+            <legend>Authors</legend>
+            <input type="hidden" id="${workPrefix}_author_nb" value="0" />
+            <div class="addRemoveAuthor">
+                <input type="button" id="${workPrefix}_author_add" value="Add one"
+                    onclick="addPerson('${workPrefix}_author', 'Author');" />
+                <input type="button" id="${workPrefix}_author_remove" value="Remove last"
+                    onclick="removePerson('${workPrefix}_author', true);" />
+            </div>
+        </fieldset>
+    `;
+
+    return fieldset;
+}
+
+function addCiteWithWithId(container, id) {
+    var workPrefix = `citeWith_${id}`;
+    var fieldset = createCiteWithFieldset(workPrefix, `Companion work #${id}`);
+    container.appendChild(fieldset);
+}
+
+function addCiteWith() {
+    var container = document.querySelector('#citeWith_container');
+    var workId = getNbCiteWiths() + 1;
+
+    addCiteWithWithId(container, workId);
+    setNbCiteWiths(workId);
+
+    return workId;
+}
+
+function removeCiteWith(deleteStorage) {
+    var workId = getNbCiteWiths();
+    if (workId <= 0) {
+        return;
+    }
+    document.querySelector(`#citeWith_${workId}`).remove();
+
+    setNbCiteWiths(workId - 1);
+
+    if (deleteStorage) {
+        generateCodemeta(lastCodemetaVersion);
+    }
+}
+
+function removeCiteWiths(deleteStorage) {
+    var nbWorks = getNbCiteWiths();
+    for (let workId = 1; workId <= nbWorks; workId++) {
+        removeCiteWith(deleteStorage);
     }
 }

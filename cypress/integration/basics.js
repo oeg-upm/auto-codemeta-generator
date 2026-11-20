@@ -132,11 +132,11 @@ describe('JSON Generation', function() {
                 // }
         });
 
-        cy.get('#generateCodemetaV3').click();
+        cy.get('#generateCodemetaV31').click();
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
-                "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.1",
                 "@type": ["SoftwareSourceCode", "SoftwareApplication"],
                 "name": "My Test Software",
                 "continuousIntegration": "https://test-ci.org/my-software",
